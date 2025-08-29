@@ -28,3 +28,6 @@ This repository contains an E-Commerce Platform for CSE 4214/6214. It supports B
  Alex: Project Manager<br/>
  Gracie: Front End<br/>
  Hayden: Back End<br/>
+
+# Website Link
+<a href="https://haythatguy.github.io/E-Commerce-platform-Project/"> Doodle & Stick </a>

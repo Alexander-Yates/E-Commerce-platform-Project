@@ -30,4 +30,4 @@ This repository contains an E-Commerce Platform for CSE 4214/6214. It supports B
  Hayden: Back End<br/>
 
 # Website Link
-<a href="https://haythatguy.github.io/E-Commerce-platform-Project/"> Doodle & Stick </a>
+<a href="https://doodleandstick.netlify.app/"> Doodle & Stick </a>

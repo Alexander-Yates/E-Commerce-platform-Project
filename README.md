@@ -1,10 +1,10 @@
-# E-Commerce-platform-Project
+# Doodle & Stick E-Commerce Project
 This repository contains an E-Commerce Platform for CSE 4214/6214. It supports Buyers, Sellers, and Admins with role-based features such as product search, purchase, sales, and account management.
 
 # Probable Functionalities
   Buyers:	<br/>
     - Search and browse products <br/>
-    - Add items to cart and checkout <br/>
+    - Add items to the cart and checkout <br/>
     - View order history <br/>
   Sellers: <br/>
     - List and manage products for sale <br/>

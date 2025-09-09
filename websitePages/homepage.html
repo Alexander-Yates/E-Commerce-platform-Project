@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My E-Commerce Site</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;   /* stays at top but can be hidden */
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f8f9fa;
+      padding: 15px 30px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: top 0.3s; /* smooth slide effect */
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    /* Page content */
+    .content {
+      padding: 20px;
+      margin-top: 80px; /* space so content isn’t hidden by fixed navbar */
+      height: 2000px; /* long page to scroll */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar" id="navbar">
+    <div class="logo">My Store</div>
+    <a href="login.html" class="btn">Login</a>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <h1>Welcome to Doodle & Stick!</h1>
+    <p>Scroll down to hide the navbar, scroll up to show it again.</p>
+  </div>
+
+  <script>
+    let lastScrollY = window.scrollY;
+    const navbar = document.getElementById("navbar");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > lastScrollY) {
+        // Scrolling down → hide navbar
+        navbar.style.top = "-80px";
+      } else {
+        // Scrolling up → show navbar
+        navbar.style.top = "0";
+      }
+      lastScrollY = window.scrollY;
+    });
+  </script>
+
+</body>
+</html>

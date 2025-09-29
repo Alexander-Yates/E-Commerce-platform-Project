@@ -14,7 +14,6 @@
       height: 100vh;
     }
 
-    /* Logo link */
     .brand-logo {
       font-size: 28px;
       font-weight: bold;
@@ -32,7 +31,8 @@
       padding: 40px;
       border-radius: 8px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 400px;
+      width: 90%;
+      max-width: 400px;
     }
 
     .signup-container h2 {
@@ -90,43 +90,126 @@
     .extra-links a:hover {
       text-decoration: underline;
     }
+
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .loader {
+      display: none;
+      text-align: center;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Brand Logo at Top -->
   <a href="index.html" class="brand-logo">Doodle & Stick</a>
 
   <div class="signup-container">
     <h2>Create an Account</h2>
-    <form action="/signup" method="POST">
+    <div id="error" class="error-message"></div>
+    <form id="signup-form">
       <div class="form-group">
-        <label for="fullname">Full Name</label>
-        <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter a username" required>
       </div>
 
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        <input type="email" id="email" placeholder="Enter your email" required>
       </div>
 
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Create a password" required>
+        <input type="password" id="password" placeholder="Create a password" required>
       </div>
 
       <div class="form-group">
         <label for="confirm-password">Confirm Password</label>
-        <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+        <input type="password" id="confirm-password" placeholder="Confirm your password" required>
       </div>
 
       <button type="submit" class="btn">Sign Up</button>
+      <div class="loader" id="loader">Creating account...</div>
     </form>
 
     <div class="extra-links">
       <p>Already have an account? <a href="login.html">Login</a></p>
     </div>
   </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const signupForm = document.getElementById("signup-form");
+    const errorDiv = document.getElementById("error");
+    const loader = document.getElementById("loader");
+
+    signupForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorDiv.style.display = "none";
+      loader.style.display = "block";
+
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+
+      if (password !== confirmPassword) {
+        errorDiv.textContent = "Passwords do not match!";
+        errorDiv.style.display = "block";
+        loader.style.display = "none";
+        return;
+      }
+
+      // 1. Create user in Supabase Auth
+      const { data, error } = await client.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.style.display = "block";
+        loader.style.display = "none";
+        return;
+      }
+
+      // 2. Insert user into "users" table
+      if (data.user) {
+        const { error: insertError } = await client
+          .from("users")
+          .insert([
+            {
+              id: data.user.id,
+              email: email,
+              username: username,
+              role: "user",
+              is_active: true
+            }
+          ]);
+
+        if (insertError) {
+          console.error("Error saving user profile:", insertError);
+          errorDiv.textContent = "Failed to save user profile.";
+          errorDiv.style.display = "block";
+          loader.style.display = "none";
+          return;
+        }
+      }
+
+      loader.style.display = "none";
+      alert("Account created! Please check your email to confirm your account.");
+      window.location.href = "login.html";
+    });
+  </script>
 
 </body>
 </html>

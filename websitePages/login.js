@@ -16,8 +16,8 @@ loginForm.addEventListener("submit", async (e) => {
   errorDiv.style.display = "none";
   loader.style.display = "block";
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  const email = document.getElementById("email").value.trim().toLowerCase(); // added toLowerCase so supabase is happy
+  const password = document.getElementById("password").value;                // supabase autos to all lowercase
 
   // Attempt login
   const { data: { user, session }, error } = await client.auth.signInWithPassword({ email, password });
@@ -34,7 +34,8 @@ loginForm.addEventListener("submit", async (e) => {
     .from("users") // or "profiles"
     .select("*")
     .eq("id", user.id)
-    .single();
+    
+    console.log("Query result: ", userRecord, fetchError) // log is for de-bug
 
   if (fetchError || !userRecord) {
     errorDiv.textContent = "User record not found.";
@@ -58,7 +59,7 @@ loginForm.addEventListener("submit", async (e) => {
 // Handle forgot password
 forgotPasswordLink.addEventListener("click", async (e) => {
   e.preventDefault();
-  const email = document.getElementById("email").value.trim();
+  const email = document.getElementById("email").value.trim(); 
 
   if (!email) {
     errorDiv.textContent = "Please enter your email above first.";

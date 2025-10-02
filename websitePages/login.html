@@ -128,67 +128,13 @@
     </form>
 
     <div class="extra-links">
-      <p><a href="#">Forgot Password?</a></p>
+      <p><a href="#" id="forgot-password">Forgot Password?</a></p>
       <p>Don’t have an account? <a href="signup.html">Sign Up</a></p>
     </div>
   </div>
 
+  <!-- Supabase client + your JS -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    const loginForm = document.getElementById("login-form");
-    const errorDiv = document.getElementById("error");
-    const loader = document.getElementById("loader");
-
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      errorDiv.style.display = "none";
-      loader.style.display = "block";
-
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      // 1. Attempt login with Supabase Auth
-      const { data, error } = await client.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        errorDiv.textContent = error.message;
-        errorDiv.style.display = "block";
-        loader.style.display = "none";
-        return;
-      }
-
-      // 2. Check "users" table for is_active and other info
-      const { data: userRecord, error: fetchError } = await client
-        .from("users")
-        .select("*")
-        .eq("id", data.user.id)
-        .single();
-
-      if (fetchError || !userRecord) {
-        errorDiv.textContent = "User record not found.";
-        errorDiv.style.display = "block";
-        loader.style.display = "none";
-        return;
-      }
-
-      if (!userRecord.is_active) {
-        errorDiv.textContent = "Your account is inactive. Please contact support.";
-        errorDiv.style.display = "block";
-        loader.style.display = "none";
-        return;
-      }
-
-      // Optional: handle failed_attempts / locked_until here
-
-      loader.style.display = "none";
-      alert("Login successful!");
-      window.location.href = "index.html"; // redirect to homepage
-    });
-  </script>
-
+  <script src="login.js"></script>
 </body>
 </html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Seller Dashboard</a>
+      <div class="d-flex">
+        <span class="text-light me-3">Logged in as: <b id="sellerName">SellerName</b></span>
+        <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <!-- Overview Cards -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h5 class="card-title">Total Sales</h5>
+            <p class="fs-4" id="totalSales">$0</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h5 class="card-title">Orders</h5>
+            <p class="fs-4" id="orderCount">0</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h5 class="card-title">Active Products</h5>
+            <p class="fs-4" id="activeProducts">0</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-center shadow">
+          <div class="card-body">
+            <h5 class="card-title">Revenue (This Month)</h5>
+            <p class="fs-4" id="monthlyRevenue">$0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="card shadow mb-4">
+      <div class="card-header bg-primary text-white d-flex justify-content-between">
+        <h5 class="mb-0">My Products</h5>
+        <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">+ Add Product</button>
+      </div>
+      <div class="card-body">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Available</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productTableBody">
+            <!-- Products will be injected dynamically with JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sales Summary -->
+    <div class="card shadow">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Sales Analytics</h5>
+      </div>
+      <div class="card-body">
+        <p><b>Total Revenue:</b> <span id="summaryRevenue">$0</span></p>
+        <p><b>Total Orders:</b> <span id="summaryOrders">0</span></p>
+        <p><b>Top Selling Product:</b> <span id="topProduct">N/A</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Product Modal -->
+  <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="addProductForm">
+          <div class="modal-header">
+            <h5 class="modal-title">Add New Product</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Product Name</label>
+              <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+              <!-- Locked to Sticker only -->
+              <input type="text" name="category" class="form-control" value="Sticker" readonly>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Price</label>
+              <input type="number" name="price" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Quantity Available</label>
+              <input type="number" name="quantity_available" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea name="description" class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Save Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Example: Mock data (this would be replaced with Supabase fetch later)
+    let products = [
+      { id: 1, name: "Cool Sticker Pack", category: "Sticker", price: 5, available: 50, sold: 30 },
+      { id: 2, name: "Holographic Sticker", category: "Sticker", price: 3, available: 100, sold: 70 }
+    ];
+
+    function updateDashboard() {
+      // Calculate analytics
+      let totalSales = products.reduce((sum, p) => sum + (p.price * p.sold), 0);
+      let totalOrders = products.reduce((sum, p) => sum + p.sold, 0);
+      let activeProducts = products.length;
+      let monthlyRevenue = totalSales; // mock same as total for now
+
+      // Find top selling
+      let topProduct = products.length ? products.reduce((a, b) => a.sold > b.sold ? a : b).name : "N/A";
+
+      // Update UI
+      document.getElementById("totalSales").textContent = `$${totalSales}`;
+      document.getElementById("orderCount").textContent = totalOrders;
+      document.getElementById("activeProducts").textContent = activeProducts;
+      document.getElementById("monthlyRevenue").textContent = `$${monthlyRevenue}`;
+
+      document.getElementById("summaryRevenue").textContent = `$${totalSales}`;
+      document.getElementById("summaryOrders").textContent = totalOrders;
+      document.getElementById("topProduct").textContent = topProduct;
+
+      // Render products table
+      let tbody = document.getElementById("productTableBody");
+      tbody.innerHTML = "";
+      products.forEach(p => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${p.name}</td>
+            <td>${p.category}</td>
+            <td>$${p.price}</td>
+            <td>${p.available}</td>
+            <td>
+              <button class="btn btn-warning btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    // Add product form handler
+    document.getElementById("addProductForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const newProduct = {
+        id: Date.now(),
+        name: formData.get("name"),
+        category: "Sticker",
+        price: parseFloat(formData.get("price")),
+        available: parseInt(formData.get("quantity_available")),
+        sold: 0
+      };
+      products.push(newProduct);
+      updateDashboard();
+      e.target.reset();
+      bootstrap.Modal.getInstance(document.getElementById("addProductModal")).hide();
+    });
+
+    // Initial load
+    updateDashboard();
+  </script>
+</body>
+</html>

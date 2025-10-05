@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doodle & Stick | Admin Dashboard</title>
+
+  <style>
+    :root {
+      --mustard: #d1a05a;    /* Dull Yellow */
+      --peach: #f7a97b;      /* Light Orange */
+      --teal: #4b8c8d;       /* Muted Teal */
+      --cream: #f5edd8;      /* Soft Cream */
+      --brown: #a46a42;      /* Warm Brown */
+      --text: #3b2f2f;
+      --shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    header {
+      background: var(--teal);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    main {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      box-shadow: var(--shadow);
+      border-left: 6px solid var(--mustard);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-weight: 600;
+      color: var(--brown);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stats div {
+      flex: 1;
+      min-width: 120px;
+      background: var(--cream);
+      border-radius: 12px;
+      text-align: center;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .stats strong {
+      font-size: 1.6rem;
+      display: block;
+      color: var(--teal);
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    button {
+      background: var(--peach);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    button:hover {
+      background: var(--mustard);
+      transform: translateY(-2px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #e4d5b7;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: var(--cream);
+      color: var(--brown);
+      font-weight: 600;
+    }
+
+    td button {
+      background: var(--brown);
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+    }
+
+    #logoutBtn {
+      background: white;
+      color: var(--teal);
+      font-weight: 600;
+    }
+
+    #logoutBtn:hover {
+      background: var(--mustard);
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      main { padding: 1rem; }
+      .stats { flex-direction: column; }
+      table { font-size: 0.85rem; }
+      .actions { flex-wrap: wrap; justify-content: flex-end; }
+    }
+  </style>
+
+  <script defer src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+  <header>
+    <h1>Admin Dashboard</h1>
+    <button id="logoutBtn">Log Out</button>
+  </header>
+
+  <main>
+    <!-- Overview -->
+    <section id="overview" class="card">
+      <h2>Overview</h2>
+      <div class="stats">
+        <div><strong id="buyersCount">0</strong><p>Buyers</p></div>
+        <div><strong id="sellersCount">0</strong><p>Sellers</p></div>
+        <div><strong id="transactionsCount">0</strong><p>Transactions</p></div>
+        <div><strong id="disputesCount">0</strong><p>Open Disputes</p></div>
+      </div>
+    </section>
+
+    <!-- User Management -->
+    <section class="card">
+      <h2>
+        User Management
+        <span class="actions">
+          <button id="showBuyersBtn">View Buyers</button>
+          <button id="showSellersBtn">View Sellers</button>
+          <button id="createUserBtn">+ Create User</button>
+        </span>
+      </h2>
+      <table id="usersTable">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Transactions -->
+    <section class="card">
+      <h2>Recent Transactions</h2>
+      <table id="transactionsTable">
+        <thead>
+          <tr><th>Order ID</th><th>Buyer</th><th>Seller</th><th>Total</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Disputes -->
+    <section class="card">
+      <h2>Disputes</h2>
+      <table id="disputesTable">
+        <thead>
+          <tr><th>Dispute ID</th><th>Order</th><th>Opened By</th><th>Reason</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
+
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert("Not logged in!");
+        window.location.href = "/login.html";
+        return;
+      }
+      const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+      if (!profile || profile.role !== "admin") {
+        alert("Access denied.");
+        window.location.href = "/";
+      }
+    })();
+
+    async function loadOverview() {
+      const { data } = await supabase.rpc("admin_overview");
+      if (!data) return;
+      document.getElementById("buyersCount").textContent = data.buyers;
+      document.getElementById("sellersCount").textContent = data.sellers;
+      document.getElementById("transactionsCount").textContent = data.orders_7d;
+      document.getElementById("disputesCount").textContent = data.disputes_open;
+    }
+
+    async function loadUsers(role) {
+      const { data } = await supabase.from("profiles").select("id, display_name, role, is_active").eq("role", role);
+      const tbody = document.querySelector("#usersTable tbody");
+      tbody.innerHTML = "";
+      data.forEach(u => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${u.display_name || "—"}</td>
+          <td>${u.id.slice(0,8)}...</td>
+          <td>${u.role}</td>
+          <td>${u.is_active ? "Active" : "Inactive"}</td>
+          <td>
+            <button class="deactivateBtn" data-id="${u.id}">
+              ${u.is_active ? "Deactivate" : "Activate"}
+            </button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById("showBuyersBtn").addEventListener("click", () => loadUsers("buyer"));
+    document.getElementById("showSellersBtn").addEventListener("click", () => loadUsers("seller"));
+
+    async function loadTransactions() {
+      const { data } = await supabase.from("orders").select("id,buyer_id,total_cents,status").order("id",{ascending:false}).limit(10);
+      const tbody = document.querySelector("#transactionsTable tbody");
+      tbody.innerHTML = "";
+      data.forEach(o => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${o.id}</td><td>${o.buyer_id.slice(0,8)}...</td><td>—</td><td>$${(o.total_cents/100).toFixed(2)}</td><td>${o.status}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadDisputes() {
+      const { data } = await supabase.from("disputes").select("id,order_id,opened_by,reason,status").limit(10);
+      const tbody = document.querySelector("#disputesTable tbody");
+      tbody.innerHTML = "";
+      data.forEach(d => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${d.id}</td><td>${d.order_id}</td><td>${d.opened_by.slice(0,8)}...</td><td>${d.reason}</td><td>${d.status}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    loadOverview();
+    loadUsers("buyer");
+    loadTransactions();
+    loadDisputes();
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      window.location.href = "/login.html";
+    });
+  </script>
+</body>
+</html>

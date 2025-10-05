@@ -39,8 +39,8 @@ loginForm.addEventListener("submit", async (e) => {
     .from("users") // or "profiles"
     .select("*")
     .eq("id", user.id)
+    .maybeSingle();
     
-    console.log("Query result: ", userRecord, fetchError) // log is for de-bug
 
   if (fetchError || !userRecord) {
     errorDiv.textContent = "User record not found.";
@@ -48,7 +48,7 @@ loginForm.addEventListener("submit", async (e) => {
     loader.style.display = "none";
     return;
   }
-
+ // need to add code to send users to their specified page (admins -> admin dashboard) - AY
   if (!userRecord.is_active) {
     errorDiv.textContent = "Your account is inactive. Please contact support.";
     errorDiv.style.display = "block";

@@ -36,11 +36,11 @@ loginForm.addEventListener("submit", async (e) => {
 
   // Check users table for extra info
   const { data: userRecord, error: fetchError } = await client
-    .from("users") // or "profiles"
-    .select("*")
+    .from("users")
+    .select("role, is_active")
     .eq("id", user.id)
-    
-    console.log("Query result: ", userRecord, fetchError) // log is for de-bug
+    .maybeSingle();
+    console.log("Query result:", { userRecord, fetchError});
 
   if (fetchError || !userRecord) {
     errorDiv.textContent = "User record not found.";
@@ -58,7 +58,21 @@ loginForm.addEventListener("submit", async (e) => {
 
   loader.style.display = "none";
   alert("Login successful!");
-  window.location.href = "index.html"; // redirect to homepage
+  
+  switch (userRecord.role) {
+    case "admin":
+      window.location.href = "/websitePages/adminPage/index.html";
+      break;
+    case "seller":
+      window.location.href = "/websitePages/sellerPage/index.html"; // optional for later
+      break;
+    case "buyer":
+    default:
+      window.location.href = "/websitePages/index.html";
+     break;
+}
+  
+  
 });
 
 // Handle forgot password

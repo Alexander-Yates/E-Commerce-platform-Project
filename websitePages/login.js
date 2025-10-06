@@ -36,11 +36,11 @@ loginForm.addEventListener("submit", async (e) => {
 
   // Check users table for extra info
   const { data: userRecord, error: fetchError } = await client
-    .from("profiles")
-    .select("roles, is_active")
+    .from("users")
+    .select("role, is_active")
     .eq("id", user.id)
     .maybeSingle();
-    
+    console.log("Query result:", { userRecord, fetchError});
 
   if (fetchError || !userRecord) {
     errorDiv.textContent = "User record not found.";
@@ -48,7 +48,7 @@ loginForm.addEventListener("submit", async (e) => {
     loader.style.display = "none";
     return;
   }
- // need to add code to send users to their specified page (admins -> admin dashboard) - AY
+
   if (!userRecord.is_active) {
     errorDiv.textContent = "Your account is inactive. Please contact support.";
     errorDiv.style.display = "block";
@@ -57,6 +57,7 @@ loginForm.addEventListener("submit", async (e) => {
   }
 
   loader.style.display = "none";
+  alert("Login successful!");
   
   switch (userRecord.role) {
     case "admin":
@@ -70,8 +71,8 @@ loginForm.addEventListener("submit", async (e) => {
       window.location.href = "/websitePages/index.html";
      break;
 }
-  alert("Login successful!");
-  window.location.href = "index.html"; // redirect to homepage
+  
+  
 });
 
 // Handle forgot password

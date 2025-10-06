@@ -58,17 +58,17 @@ loginForm.addEventListener("submit", async (e) => {
 
   loader.style.display = "none";
   alert("Login successful!");
-  
+
   switch (userRecord.role) {
     case "admin":
-      window.location.href = "/websitePages/adminPage/index.html";
+      window.location.href = "websitePages/adminPage/index.html";
       break;
     case "seller":
-      window.location.href = "/websitePages/sellerPage/index.html"; // optional for later
+      window.location.href = "websitePages/sellerPage/index.html"; // optional for later
       break;
     case "buyer":
     default:
-      window.location.href = "/websitePages/index.html";
+      window.location.href = "websitePages/index.html";
      break;
 }
   

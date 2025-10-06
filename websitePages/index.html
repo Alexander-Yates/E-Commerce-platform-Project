@@ -1,90 +1,211 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Doodle & Stick</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doodle & Stick | Stickers & Art</title>
+
   <style>
+    :root {
+      --mustard: #d1a05a;
+      --peach: #f7a97b;
+      --teal: #4b8c8d;
+      --cream: #f5edd8;
+      --brown: #a46a42;
+      --text: #3b2f2f;
+      --shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      background: var(--cream);
+      color: var(--text);
     }
 
     /* Navbar */
     .navbar {
-      position: fixed;   /* stays at top but can be hidden */
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: #f8f9fa;
-      padding: 15px 30px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      transition: top 0.3s; /* smooth slide effect */
+      background: var(--teal);
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: var(--shadow);
       z-index: 1000;
+      transition: top 0.3s ease;
     }
 
     .logo {
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: 0.5px;
     }
 
-    .btn {
-      padding: 10px 18px;
-      background: #007bff;
+    .nav-links a {
       color: white;
-      border-radius: 5px;
       text-decoration: none;
-      font-size: 16px;
+      margin-left: 1rem;
+      background: var(--peach);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      background: var(--mustard);
+      transform: translateY(-2px);
+    }
+
+    /* Hero section */
+    .hero {
+      margin-top: 80px;
+      background: linear-gradient(to right, var(--mustard), var(--peach));
+      color: white;
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Featured Section */
+    .featured {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .featured h2 {
+      color: var(--brown);
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .featured p {
+      max-width: 600px;
+      margin: 0 auto 2rem auto;
+      color: var(--text);
+    }
+
+    /* Product grid */
+    .products {
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+
+    .product {
+      background: white;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .product:hover {
+      transform: translateY(-6px);
+    }
+
+    .product img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 1rem;
+    }
+
+    .product-info h3 {
+      font-size: 1.1rem;
+      color: var(--brown);
+      margin: 0.5rem 0;
+    }
+
+    .product-info p {
+      color: var(--teal);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .add-btn {
+      background: var(--mustard);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
       transition: background 0.3s ease;
-      margin-left: 10px; /* space between buttons */
     }
 
-    .btn:hover {
-      background: #0056b3;
+    .add-btn:hover {
+      background: var(--peach);
     }
 
-    /* Page content */
-    .content {
-      padding: 20px;
-      margin-top: 80px; /* space so content isn’t hidden by fixed navbar */
-      height: 2000px; /* long page to scroll */
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background: var(--teal);
+      color: white;
+      margin-top: 3rem;
+      font-size: 0.95rem;
     }
   </style>
 </head>
-<body>
 
+<body>
   <!-- Navbar -->
   <div class="navbar" id="navbar">
     <div class="logo">Doodle & Stick</div>
-    <div>
-      <a href="login.html" class="btn">Login</a>
-      <a href="signup.html" class="btn">Sign Up</a>
+    <div class="nav-links">
+      <a href="login.html">Login</a>
+      <a href="signup.html">Sign Up</a>
+      <a href="cart.html">Cart</a>
     </div>
   </div>
 
-  <!-- Content -->
-  <div class="content">
-    <h1>Welcome to Doodle & Stick!</h1>
-    <p>Scroll down to hide the navbar, scroll up to show it again.</p>
-  </div>
+  <!-- Hero Banner -->
+  <section class="hero">
+    <h1>Stickers That Speak Your Style</h1>
+    <p>Explore thousands of creative, handmade stickers from independent artists around the world.</p>
+  </section>
 
-  <script>
-    let lastScrollY = window.scrollY;
-    const navbar = document.getElementById("navbar");
+  <!-- Featured -->
+  <section class="featured">
+    <h2>Featured Collections</h2>
+    <p>From cute doodles to bold designs — find stickers that fit your vibe.</p>
+  </section>
 
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > lastScrollY) {
-        // Scrolling down → hide navbar
-        navbar.style.top = "-80px";
-      } else {
-        // Scrolling up → show navbar
-        navbar.style.top = "0";
-      }
-      lastScrollY = window.scrollY;
-    });
-  </script>
+  <!-- Product Grid -->
+  <section class="products" id="productsGrid">
+    <!-- Products will load here dynamically -->
+  </section>
 
+  <footer>
+    © 2025 Doodle & Stick — Stickers that make you smile.
+  </footer>
+
+  <!-- Supabase + Main JS -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="main.js" defer></script>
 </body>
 </html>

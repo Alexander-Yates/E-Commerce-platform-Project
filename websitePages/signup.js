@@ -1,5 +1,3 @@
-// signup.js
-
 // Supabase setup
 const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
@@ -36,21 +34,32 @@ signupForm.addEventListener("submit", async (e) => {
     return;
   }
 
+
   // Insert user into users table
   if (data.user) {
-    const { error: insertError } = await client.from("users").insert([
-      {
-        id: data.user.id,
-        email,
-        username,
-        role: "buyer",
-        is_active: true,
-      },
-    ]);
+    try {
+      const response = await fetch(
+     "https://mxnagoeammjedhmbfjud.functions.supabase.co/create-profile",
+   {
+    method: "POST",
+    headers: { "Content-Type": "application/json",
+               "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+     },
+    body: JSON.stringify({
+      id: data.user.id,
+      email,
+      username,
+      role: "buyer",
+      is_active: true,
+    }),
+   }
+);
 
-    if (insertError) {
-      console.error("Error saving user profile:", insertError);
-      errorDiv.textContent = "Failed to save user profile.";
+
+      if (!response.ok) throw new Error(await response.text());
+    } catch (err) {
+      console.error("Profile creation failed:", err);
+      errorDiv.textContent = "Failed to save user profile (server).";
       errorDiv.style.display = "block";
       loader.style.display = "none";
       return;

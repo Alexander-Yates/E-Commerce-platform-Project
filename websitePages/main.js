@@ -58,8 +58,6 @@ async function loadProducts() {
 
 // Load products on page load
 loadProducts();
-
-/* ✅ FINAL CLEAN FIX: hides links, handles logout, and resets ghost sessions */
 document.addEventListener("DOMContentLoaded", async () => {
   const sellLink = document.getElementById("wantToSellLink");
   const logoutLink = document.getElementById("logoutLink");
@@ -68,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // If any are missing, stop
   if (!sellLink || !logoutLink || !loginLink || !signupLink) {
-    console.error("❌ One or more nav elements not found in DOM.");
+    console.error("One or more nav elements not found in DOM.");
     return;
   }
 
@@ -77,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   logoutLink.style.display = "none";
 
   const toggleNavState = (loggedIn) => {
-    console.log("🔁 toggleNavState -> loggedIn:", loggedIn);
+    console.log("toggleNavState -> loggedIn:", loggedIn);
     if (loggedIn) {
       sellLink.style.display = "inline-block";
       logoutLink.style.display = "inline-block";
@@ -91,41 +89,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // 🧭 Function to validate the session token with Supabase
+  // Function to validate the session token with Supabase
   const validateSession = async (session) => {
     try {
       if (!session?.access_token) return false;
       const { data, error } = await client.auth.getUser();
       if (error) {
-        console.warn("⚠️ Session invalid, logging out:", error.message);
+        console.warn("Session invalid, logging out:", error.message);
         await client.auth.signOut();
         return false;
       }
       return !!data?.user;
     } catch (e) {
-      console.error("❌ Error validating session:", e);
+      console.error("Error validating session:", e);
       return false;
     }
   };
 
-  // 🔍 1. Check current/restored session
+  // 1. Check current/restored session
   const { data: { session }, error: sessionError } = await client.auth.getSession();
-  console.log("🧩 Initial getSession result:", session, sessionError);
+  console.log("Initial getSession result:", session, sessionError);
 
   const valid = await validateSession(session);
   toggleNavState(valid);
 
-  // ⚡ 2. Watch for login/logout events
+  // 2. Watch for login/logout events
   client.auth.onAuthStateChange(async (event, newSession) => {
-    console.log("⚡ onAuthStateChange:", event, newSession);
+    console.log("onAuthStateChange:", event, newSession);
     const stillValid = await validateSession(newSession);
     toggleNavState(stillValid);
   });
 
-  // 🚪 3. Logout button handler
+  // 3. Logout button handler
   logoutLink.addEventListener("click", async (e) => {
     e.preventDefault();
-    console.log("🚪 Logging out...");
+    console.log("Logging out...");
     await client.auth.signOut();
     toggleNavState(false);
     alert("You’ve been logged out!");

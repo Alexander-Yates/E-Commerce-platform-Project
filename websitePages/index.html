@@ -62,6 +62,8 @@
       transform: translateY(-2px);
     }
 
+    #wantToSellLink { display: none; }
+
     /* Hero section */
     .hero {
       margin-top: 80px;
@@ -176,11 +178,14 @@
   <!-- Navbar -->
   <div class="navbar" id="navbar">
     <div class="logo">Doodle & Stick</div>
-    <div class="nav-links">
-      <a href="login.html">Login</a>
-      <a href="signup.html">Sign Up</a>
-      <a href="cart.html">Cart</a>
-    </div>
+     <div class="nav-links">
+      <a href="login.html" id="loginLink">Login</a>
+      <a href="signup.html" id="signupLink">Sign Up</a>
+      <a href="becomeseller.html" id="wantToSellLink" style="display:none;">Become a Seller</a>
+      <a href="cart.html" id="cartLink">Cart</a>
+      <a href="#" id="logoutLink" style="display:none; background:#a46a42;">Logout</a>
+</div>
+
   </div>
 
   <!-- Hero Banner -->

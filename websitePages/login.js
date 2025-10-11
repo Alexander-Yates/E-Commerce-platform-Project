@@ -64,7 +64,7 @@ loginForm.addEventListener("submit", async (e) => {
       window.location.href = "/adminPages/index.html";
       break;
     case "seller":
-      window.location.href = "/sellerPages/index.html"; // optional for later
+      window.location.href = "/sellerPages/index.html";
       break;
     case "buyer":
     default:

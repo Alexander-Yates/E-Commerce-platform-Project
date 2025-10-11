@@ -28,11 +28,17 @@
       color: white;
       padding: 1rem 2rem;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       box-shadow: var(--shadow);
     }
 
+    header .right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
     h1 {
       margin: 0;
       font-weight: 600;
@@ -145,6 +151,222 @@
       background: var(--mustard);
       color: white;
     }
+    #notifWrapper {
+      position: relative;
+      margin-right: 1rem;
+    }
+
+    #notifBtn {
+      background: var(--peach);
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: background 0.2s ease;
+      padding: 0;
+    }
+
+    #notifBtn:hover {
+      background: var(--mustard);
+    }
+
+    #notifBtn img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+    }
+
+    #notifBadge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background: var(--mustard);
+      color: white;
+      font-size: 0.7rem;
+      border-radius: 50%;
+      padding: 3px 6px;
+      min-width: 16px;
+      text-align: center;
+      display: none;
+    }
+
+    #notifDropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 55px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      width: 280px;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    #notifDropdown.show {
+      display: block;
+    }
+
+    #notifDropdown p {
+      margin: 0;
+      padding: 0.8rem;
+      border-bottom: 1px solid #eee;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #notifDropdown p.unread {
+      background: var(--cream);
+      font-weight: 600;
+    }
+    /* ---------- Modal Styles ---------- */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 80%;
+      max-width: 700px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      border-left: 6px solid var(--teal);
+      text-align: left;
+    }
+
+    .modal-content h2 {
+      color: var(--brown);
+      margin-top: 0;
+    }
+
+    .modal-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .modal-content th, .modal-content td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #eee;
+      font-size: 0.95rem;
+    }
+
+    .modal-content th {
+      background: var(--cream);
+      color: var(--teal);
+      font-weight: 600;
+    }
+    .modal-content input, .modal-content select {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 0.4rem;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .modal-content button[type="submit"] {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+
+    .modal-content button[type="submit"]:hover {
+      background: var(--mustard);
+    }
+
+    .modal-content button[type="button"] {
+      background: #ccc;
+      color: #333;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .modal-content button[type="button"]:hover {
+      background: #bbb;
+    }
+
+
+    #closeBuyersBtn {
+      margin-top: 1rem;
+      background: var(--teal);
+     color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    #closeBuyersBtn:hover {
+      background: var(--mustard);
+    }
+    
+    /* ---------- Action Button Styles ---------- */
+    button.editUserBtn,
+    button.deleteUserBtn {
+      -family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      padding: 0.45rem 0.9rem;
+      margin: 0 0.25rem;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.15s;
+    }
+
+    /* Edit (teal → mustard hover) */
+    button.editUserBtn {
+      background: var(--teal);
+      color: white;
+    }
+    button.editUserBtn:hover {
+      background: var(--mustard);
+      color: var(--brown);
+      transform: translateY(-1px);
+    }
+
+    /* Delete (soft red → deeper red hover) */
+    button.deleteUserBtn {
+      background: #e57373; /* soft red */
+      color: white;
+    }
+    button.deleteUserBtn:hover {
+      background: #c0392b;
+      transform: translateY(-1px);
+    }
+
+    /* Optional subtle table alignment */
+    #usersTable td:last-child {
+      text-align: center;
+    }
+
 
     @media (max-width: 768px) {
       main { padding: 1rem; }
@@ -159,19 +381,30 @@
 
 <body>
   <header>
-    <h1>Admin Dashboard</h1>
+  <h1>Admin Dashboard</h1>
+  <div class="right">
+    <button onclick="window.location.href='manageListings.html'">Manage Listings</button>
+    <div id="notifWrapper">
+      <button id="notifBtn" title="Notifications">
+        <img src="https://cdn-icons-png.flaticon.com/512/1827/1827349.png" alt="Notifications" />
+      </button>
+      <span id="notifBadge" style="display:none;"></span>
+      <div id="notifDropdown"></div>
+    </div>
     <button id="logoutBtn">Log Out</button>
-  </header>
+  </div>
+</header>
+
 
   <main>
     <!-- Overview -->
     <section id="overview" class="card">
       <h2>Overview</h2>
       <div class="stats">
-        <div><strong id="buyersCount">0</strong><p>Buyers</p></div>
-        <div><strong id="sellersCount">0</strong><p>Sellers</p></div>
-        <div><strong id="transactionsCount">0</strong><p>Transactions</p></div>
-        <div><strong id="disputesCount">0</strong><p>Open Disputes</p></div>
+        <div><strong id="buyerCount">0</strong><p>Buyers</p></div>
+        <div><strong id="sellerCount">0</strong><p>Sellers</p></div>
+        <div><strong id="transactionCount">0</strong><p>Transactions</p></div>
+        <div><strong id="disputeCount">0</strong><p>Open Disputes</p></div>
       </div>
     </section>
 
@@ -214,91 +447,109 @@
         <tbody></tbody>
       </table>
     </section>
+
+    <!-- Buyers Modal -->
+  <div id="buyersModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+      <h2>Current Buyers</h2>
+      <table id="buyersTable">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Status</th><th>Actions</th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button id="closeBuyersBtn">Close</button>
+    </div>
+  </div>
+
+  <!-- Sellers Modal -->
+<div id="sellersModal" class="modal-overlay" style="display:none;">
+  <div class="modal-content">
+    <h2>Current Sellers</h2>
+    <table id="sellersTable">
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>Status</th><th>Actions</th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button id="closeSellersBtn">Close</button>
+  </div>
+</div>
+
+<!-- Create User Modal -->
+<div id="createUserModal" class="modal-overlay" style="display:none;">
+  <div class="modal-content">
+    <h2>Create New User</h2>
+
+    <form id="createUserForm">
+      <label>Username</label><br>
+      <input type="text" id="newUsername" placeholder="Enter username" required><br><br>
+
+      <label>Email</label><br>
+      <input type="email" id="newEmail" placeholder="Enter email" required><br><br>
+
+      <label>Role</label><br>
+      <select id="newRole" required>
+        <option value="buyer">Buyer</option>
+        <option value="seller">Seller</option>
+        <option value="admin">Admin</option>
+      </select><br><br>
+
+      <label>Status</label><br>
+      <select id="newStatus" required>
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select><br><br>
+
+      <button type="submit">Create User</button>
+      <button type="button" id="cancelCreateUser">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="modal-overlay" style="display:none;">
+  <div class="modal-content">
+    <h2>Edit User</h2>
+
+    <form id="editUserForm">
+      <label>Username</label><br>
+      <input type="text" id="editUsername" disabled><br><br>
+
+      <label>Email</label><br>
+      <input type="email" id="editEmail" disabled><br><br>
+
+      <label>Role</label><br>
+      <select id="editRole" required>
+        <option value="buyer">Buyer</option>
+        <option value="seller">Seller</option>
+        <option value="admin">Admin</option>
+      </select><br><br>
+
+      <label>Status</label><br>
+      <select id="editStatus" required>
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select><br><br>
+
+      <button type="submit">Save Changes</button>
+      <button type="button" id="cancelEditUser">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<!-- Delete User Modal -->
+<div id="deleteUserModal" class="modal-overlay" style="display:none;">
+  <div class="modal-content" style="max-width: 400px; text-align: center;">
+    <h2>Confirm Deletion</h2>
+    <p id="deleteUserText"></p>
+    <button id="confirmDeleteUser" style="background:#c0392b; color:white; border:none; border-radius:8px; padding:0.6rem 1.2rem; cursor:pointer;">Delete</button>
+    <button id="cancelDeleteUser" style="background:#ccc; color:#333; border:none; border-radius:8px; padding:0.6rem 1.2rem; cursor:pointer; margin-left:0.5rem;">Cancel</button>
+  </div>
+</div>
+
   </main>
-
-  <script>
-    const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
-
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        alert("Not logged in!");
-        window.location.href = "/login.html";
-        return;
-      }
-      const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-      if (!profile || profile.role !== "admin") {
-        alert("Access denied.");
-        window.location.href = "/";
-      }
-    })();
-
-    async function loadOverview() {
-      const { data } = await supabase.rpc("admin_overview");
-      if (!data) return;
-      document.getElementById("buyersCount").textContent = data.buyers;
-      document.getElementById("sellersCount").textContent = data.sellers;
-      document.getElementById("transactionsCount").textContent = data.orders_7d;
-      document.getElementById("disputesCount").textContent = data.disputes_open;
-    }
-
-    async function loadUsers(role) {
-      const { data } = await supabase.from("profiles").select("id, display_name, role, is_active").eq("role", role);
-      const tbody = document.querySelector("#usersTable tbody");
-      tbody.innerHTML = "";
-      data.forEach(u => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${u.display_name || "—"}</td>
-          <td>${u.id.slice(0,8)}...</td>
-          <td>${u.role}</td>
-          <td>${u.is_active ? "Active" : "Inactive"}</td>
-          <td>
-            <button class="deactivateBtn" data-id="${u.id}">
-              ${u.is_active ? "Deactivate" : "Activate"}
-            </button>
-          </td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    document.getElementById("showBuyersBtn").addEventListener("click", () => loadUsers("buyer"));
-    document.getElementById("showSellersBtn").addEventListener("click", () => loadUsers("seller"));
-
-    async function loadTransactions() {
-      const { data } = await supabase.from("orders").select("id,buyer_id,total_cents,status").order("id",{ascending:false}).limit(10);
-      const tbody = document.querySelector("#transactionsTable tbody");
-      tbody.innerHTML = "";
-      data.forEach(o => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${o.id}</td><td>${o.buyer_id.slice(0,8)}...</td><td>—</td><td>$${(o.total_cents/100).toFixed(2)}</td><td>${o.status}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    async function loadDisputes() {
-      const { data } = await supabase.from("disputes").select("id,order_id,opened_by,reason,status").limit(10);
-      const tbody = document.querySelector("#disputesTable tbody");
-      tbody.innerHTML = "";
-      data.forEach(d => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${d.id}</td><td>${d.order_id}</td><td>${d.opened_by.slice(0,8)}...</td><td>${d.reason}</td><td>${d.status}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    loadOverview();
-    loadUsers("buyer");
-    loadTransactions();
-    loadDisputes();
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      window.location.href = "/login.html";
-    });
-  </script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="admin.js" defer ></script>
 </body>
 </html>

@@ -61,14 +61,14 @@ loginForm.addEventListener("submit", async (e) => {
 
   switch (userRecord.role) {
     case "admin":
-      window.location.href = "/adminPages/index.html";
+      window.location.href = "/websitePages/adminPages/index.html";
       break;
     case "seller":
-      window.location.href = "/sellerPages/index.html"; // optional for later
+      window.location.href = "/websitePages/sellerPages/index.html";
       break;
     case "buyer":
     default:
-      window.location.href = "/index.html";
+      window.location.href = "/websitePages/index.html";
      break;
 }
   

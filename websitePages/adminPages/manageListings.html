@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Listings - Doodle & Stick Admin</title>
+  <style>
+  :root {
+    --mustard: #d1a05a;
+    --peach: #f7a97b;
+    --teal: #4b8c8d;
+    --cream: #f5edd8;
+    --brown: #a46a42;
+    --text: #3b2f2f;
+    --shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+  }
+
+  header {
+    background: var(--teal);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+  }
+
+  header h1 {
+    margin: 0;
+    color: white;
+    font-weight: 600;
+  }
+
+  header button {
+    background: var(--mustard);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  header button:hover {
+    background: var(--peach);
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    box-shadow: var(--shadow);
+    border-left: 6px solid var(--mustard);
+  }
+
+  h1 {
+    color: var(--brown);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+
+  th, td {
+    border-bottom: 1px solid #e4d5b7;
+    padding: 0.8rem;
+    text-align: left;
+  }
+
+  th {
+    background: var(--cream);
+    color: var(--brown);
+    font-weight: 600;
+  }
+
+  tr:hover {
+    background: #faf8f5;
+  }
+
+  .delete-btn {
+    background: #e57373;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .delete-btn:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+  }
+
+  .seller-link {
+    color: var(--teal);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .seller-link:hover {
+    color: var(--mustard);
+  }
+</style>
+
+</head>
+<body>
+    <header>
+        <h1>Manage Listings</h1>
+        <button onclick="window.location.href='index.html'">← Back to Dashboard</button>
+    </header>
+
+  <div class="container">
+    <h1>Manage Listings</h1>
+    <table id="listingsTable">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Seller</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Seller Info Modal -->
+<div id="sellerModal" style="
+  display:none;
+  position:fixed;
+  top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+  align-items:center; justify-content:center;
+  z-index:1000;
+">
+  <div style="
+    background:white;
+    padding:1.5rem;
+    border-radius:12px;
+    max-width:400px;
+    text-align:center;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  ">
+    <h3 id="sellerModalName" style="margin-bottom:0.5rem;"></h3>
+    <p id="sellerModalEmail"></p>
+    <p id="sellerModalRole"></p>
+    <p id="sellerModalStatus"></p>
+    <button id="closeSellerModal" style="
+      margin-top:1rem;
+      background:var(--teal);
+      color:white;
+      border:none;
+      border-radius:8px;
+      padding:0.5rem 1rem;
+      cursor:pointer;
+    ">Close</button>
+  </div>
+</div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="manageListings.js"></script>
+</body>
+</html>

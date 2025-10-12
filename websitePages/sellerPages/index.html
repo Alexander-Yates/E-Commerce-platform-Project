@@ -1,254 +1,549 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seller Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doodle & Stick | Seller Dashboard</title>
+
   <style>
+    :root {
+      --mustard: #d1a05a;
+      --peach: #f7a97b;
+      --teal: #4b8c8d;
+      --cream: #f5edd8;
+      --brown: #a46a42;
+      --text: #3b2f2f;
+      --shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
     body {
-      background-color: #FFF8E1; /* Soft Cream */
-      color: #333333;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
     }
 
-    /* Navbar */
-    .navbar-custom {
-      background-color: #A97449; /* Warm Brown */
-    }
-    .navbar-custom .navbar-brand,
-    .navbar-custom .nav-link,
-    .navbar-custom span {
-      color: #FFFFFF;
-    }
-
-    /* Overview Cards */
-    .card-total-sales {
-      background-color: #D4AF37; /* Dull Yellow */
-      color: #333333;
-    }
-    .card-orders {
-      background-color: #FFCC99; /* Light Orange */
-      color: #333333;
-    }
-    .card-active-products {
-      background-color: #5F9EA0; /* Muted Teal */
-      color: #FFFFFF;
-    }
-    .card-revenue {
-      background-color: #FFF8E1; /* Soft Cream */
-      color: #333333;
+    header {
+      background: var(--teal);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
     }
 
-    /* Table Header */
-    .table thead {
-      background-color: #5F9EA0; /* Muted Teal */
-      color: #FFFFFF;
+    header h1 {
+      margin: 0;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
 
-    /* Sales Analytics Header */
-    .card-sales-header {
-      background-color: #FFCC99; /* Light Orange */
-      color: #333333;
+    .right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
 
-    /* Buttons */
-    .btn-accent {
-      background-color: #D4AF37;
-      color: #333333;
+    #logoutBtn {
+      background: white;
+      color: var(--teal);
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    #logoutBtn:hover {
+      background: var(--mustard);
+      color: white;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      box-shadow: var(--shadow);
+      border-left: 6px solid var(--mustard);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-weight: 600;
+      color: var(--brown);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stats div {
+      flex: 1;
+      min-width: 120px;
+      background: var(--cream);
+      border-radius: 12px;
+      text-align: center;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .stats strong {
+      font-size: 1.6rem;
+      display: block;
+      color: var(--teal);
+    }
+
+    button {
+      background: var(--peach);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    button:hover {
+      background: var(--mustard);
+      transform: translateY(-2px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #e4d5b7;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: var(--cream);
+      color: var(--brown);
+      font-weight: 600;
+    }
+
+    .editBtn {
+      background: var(--teal);
+      color: white;
+      border-radius: 8px;
+      padding: 0.45rem 0.9rem;
+    }
+
+    .editBtn:hover {
+      background: var(--mustard);
+      color: var(--brown);
+      transform: translateY(-1px);
+    }
+
+    .deleteBtn {
+      background: #e57373;
+      color: white;
+      border-radius: 8px;
+      padding: 0.45rem 0.9rem;
+    }
+
+    .deleteBtn:hover {
+      background: #c0392b;
+      transform: translateY(-1px);
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      border-left: 6px solid var(--teal);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    .modal-header {
+      color: var(--brown);
+      margin-bottom: 1rem;
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Modal Box */
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      border-left: 6px solid var(--teal);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      width: 400px;
+      max-width: 90%;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      color: var(--brown);
+    }
+
+    .modal-content label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: var(--brown);
+    }
+
+    .modal-content input,
+    .modal-content textarea {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 0.4rem;
+    }
+
+    .modal-actions {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .saveBtn {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .saveBtn:hover {
+      background: var(--mustard);
+    }
+
+    .cancelBtn {
+      background: var(--peach);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+    }
+
+    .cancelBtn:hover {
+      background: var(--brown);
+    }
+
+    /* ---------- Custom Category Dropdown ---------- */
+    select#productCategory {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border-radius: 10px;
+      border: 2px solid var(--teal);
+      background: var(--cream);
+      color: var(--text);
+      font-size: 1rem;
+      appearance: none; /* hides the default arrow */
+      outline: none;
+      cursor: pointer;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+    }
+
+    /* hover + focus effects */
+    select#productCategory:hover {
+      border-color: var(--mustard);
+      background: #fffdf7;
+    }
+
+    select#productCategory:focus {
+      border-color: var(--peach);
+      box-shadow: 0 0 0 3px rgba(247,169,123,0.3);
+    }
+
+    /* dropdown arrow */
+    select#productCategory {
+      background-image: linear-gradient(45deg, transparent 50%, var(--teal) 50%),
+                        linear-gradient(135deg, var(--teal) 50%, transparent 50%);
+      background-position: calc(100% - 1.2rem) calc(50% - 0.25rem),
+                          calc(100% - 0.75rem) calc(50% - 0.25rem);
+      background-size: 8px 8px, 8px 8px;
+      background-repeat: no-repeat;
+    }
+
+    /* spacing to avoid text overlap with arrow */
+    select#productCategory::-ms-expand {
+      display: none; /* hide arrow on IE */
+    }
+
+    select#productCategory option {
+      padding: 0.5rem;
+      background: white;
+      color: var(--text);
       border: none;
     }
-    .btn-accent:hover {
-      background-color: #C19A2B;
-      color: #333333;
+
+    .modal-content label {
+    font-weight: 600;
+    color: var(--brown);
+    display: block;
+    margin-top: 1rem;
+    }
+
+    .sort-btn {
+      background: none;
+      border: none;
+      color: var(--brown);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .sort-btn:hover {
+      color: var(--teal);
+      text-decoration: underline;
+    }
+    /* ---- Upload section ---- */
+    .upload-section {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f9f6ef;      /* Cream */
+      border: 2px dashed #d6a670;     /* Warm brown border */
+      border-radius: 12px;
+      padding: 1rem;
+      transition: 0.25s ease;
+    }
+
+    .upload-section:hover {
+      background-color: #fff6e8;      /* Light peach on hover */
+      border-color: #cc885a;
+    }
+
+    .upload-label {
+      font-weight: 600;
+      color: #5a4b35;                 /* Brown text */
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .upload-input {
+      background-color: #fff;
+      color: #5a4b35;
+      border: 1px solid #c8b49b;
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: 0.25s ease;
+      font-family: inherit;
+    }
+
+    .upload-input:hover {
+      background-color: #fef9f2;
+      border-color: #b88e60;
+    }
+
+    .upload-hint {
+      font-size: 0.85rem;
+      color: #8b7a64;
+      margin-top: 0.25rem;
+    }
+
+    .image-preview {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .image-preview img {
+      display: none;
+      max-width: 150px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      border: 3px solid #e5d1b8;
+      background-color: #fff;
+      padding: 4px;
+      transition: transform 0.2s ease;
+    }
+
+    .image-preview img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Scrollable modal fix */
+    #addProductModal {
+      display: none; /* keep default hidden */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: flex-start; /* anchor at top so it scrolls naturally */
+      overflow-y: auto; /* allow scroll inside modal */
+      padding: 2rem 0;
+      z-index: 1000;
+    }
+
+    /* Inner modal box styling */
+    .modal-content {
+      background: #fff;
+      border-radius: 15px;
+      padding: 2rem;
+      max-width: 600px;
+      width: 90%;
+      margin: auto;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+      position: relative;
+    }
+
+    /* Optional: make long modals scroll internally if desired */
+    .modal-content::-webkit-scrollbar {
+      width: 8px;
+    }
+    .modal-content::-webkit-scrollbar-thumb {
+      background: #c89a6d;
+      border-radius: 10px;
+    }
+    .modal-content::-webkit-scrollbar-thumb:hover {
+      background: #b67e4a;
+    }
+
+    #sellerName {
+      color: #fffbe9;
+      font-weight: 700;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
     }
   </style>
 </head>
+
 <body>
+  <header>
+    <h1>Seller Dashboard</h1>
+    <div class="right">
+      <span>Logged in as: <strong id="sellerName">SellerName</strong></span>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </header>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-custom">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Seller Dashboard</a>
-      <div class="d-flex">
-        <span class="me-3">Logged in as: <b id="sellerName">SellerName</b></span>
-        <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+  <main>
+    <section class="card">
+      <h2>Overview</h2>
+      <div class="stats">
+        <div><strong id="totalSales">$0</strong><p>Total Sales</p></div>
+        <div><strong id="orderCount">0</strong><p>Orders</p></div>
+        <div><strong id="activeProducts">0</strong><p>Active Products</p></div>
+        <div><strong id="monthlyRevenue">$0</strong><p>Revenue (This Month)</p></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>
+        My Products
+        <button id="addProductBtn">+ Add Product</button>
+      </h2>
+      <table>
+      <thead>
+        <tr>
+          <th><button class="sort-btn" data-sort="name">Name ↑↓</button></th>
+          <th><button class="sort-btn" data-sort="category">Category ↑↓</button></th>
+          <th><button class="sort-btn" data-sort="price">Price ↑↓</button></th>
+          <th>Available</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+        <tbody id="productTableBody"></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Sales Analytics</h2>
+      <p><b>Total Revenue:</b> <span id="summaryRevenue">$0</span></p>
+      <p><b>Total Orders:</b> <span id="summaryOrders">0</span></p>
+      <p><b>Top Selling Product:</b> <span id="topProduct">N/A</span></p>
+    </section>
+
+    <!-- Add Product Modal -->
+<div class="modal-overlay" id="addProductModal">
+  <div class="modal-content">
+    <h2 id="modalTitle">Add New Product</h2>
+    <form id="addProductForm">
+      <label>Product Name</label>
+      <input type="text" id="productName" required>
+
+      <label>Category</label>
+        <select id="productCategory" required>
+          <option value="">Select a category</option>
+        </select>
+      <label>Price ($)</label>
+      <input type="number" id="productPrice" step="0.01" required>
+
+      <label>Quantity Available</label>
+      <input type="number" id="productQuantity" required>
+
+      <label>Description</label>
+      <textarea id="productDescription" rows="3"></textarea>
+
+      <div class="upload-section">
+      <label for="productImage" class="upload-label">Product Image</label>
+      <input type="file" id="productImage" accept="image/*" class="upload-input">
+      <small class="upload-hint">Accepted formats: JPG, PNG, GIF  |  Max 2 MB</small>
+
+    <div id="imagePreview" class="image-preview">
+        <img id="previewImg" src="" alt="Preview">
       </div>
     </div>
-  </nav>
 
-  <div class="container mt-4">
 
-    <!-- Overview Cards -->
-    <div class="row mb-4">
-      <div class="col-md-3">
-        <div class="card text-center shadow card-total-sales">
-          <div class="card-body">
-            <h5 class="card-title">Total Sales</h5>
-            <p class="fs-4" id="totalSales">$0</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center shadow card-orders">
-          <div class="card-body">
-            <h5 class="card-title">Orders</h5>
-            <p class="fs-4" id="orderCount">0</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center shadow card-active-products">
-          <div class="card-body">
-            <h5 class="card-title">Active Products</h5>
-            <p class="fs-4" id="activeProducts">0</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center shadow card-revenue">
-          <div class="card-body">
-            <h5 class="card-title">Revenue (This Month)</h5>
-            <p class="fs-4" id="monthlyRevenue">$0</p>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Products Table -->
-    <div class="card shadow mb-4">
-      <div class="card-header d-flex justify-content-between" style="background-color: #5F9EA0; color: #fff;">
-        <h5 class="mb-0">My Products</h5>
-        <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">+ Add Product</button>
+      <div class="modal-actions">
+        <button type="submit" class="saveBtn" id="saveProductBtn">Save Product</button>
+        <button type="button" class="cancelBtn" id="closeModal">Cancel</button>
       </div>
-      <div class="card-body">
-        <table class="table table-hover align-middle">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Available</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="productTableBody">
-            <!-- Products will be injected dynamically with JS -->
-          </tbody>
-        </table>
-      </div>
-    </div>
 
-    <!-- Sales Summary -->
-    <div class="card shadow">
-      <div class="card-header card-sales-header">
-        <h5 class="mb-0">Sales Analytics</h5>
+      <div id="imagePreview" style="margin-top:10px; text-align:center;">
+        <img id="previewImg" src="" alt="Preview" style="max-width: 150px; border-radius: 8px; display: none;">
       </div>
-      <div class="card-body">
-        <p><b>Total Revenue:</b> <span id="summaryRevenue">$0</span></p>
-        <p><b>Total Orders:</b> <span id="summaryOrders">0</span></p>
-        <p><b>Top Selling Product:</b> <span id="topProduct">N/A</span></p>
-      </div>
-    </div>
+
+    </form>
   </div>
+</div>
 
-  <!-- Add Product Modal -->
-  <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form id="addProductForm">
-          <div class="modal-header">
-            <h5 class="modal-title">Add New Product</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Product Name</label>
-              <input type="text" name="name" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Category</label>
-              <input type="text" name="category" class="form-control" value="Sticker" readonly>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Price</label>
-              <input type="number" name="price" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Quantity Available</label>
-              <input type="number" name="quantity_available" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Description</label>
-              <textarea name="description" class="form-control"></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-accent">Save Product</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+  </main>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    let products = [
-      { id: 1, name: "Cool Sticker Pack", category: "Sticker", price: 5, available: 50, sold: 30 },
-      { id: 2, name: "Holographic Sticker", category: "Sticker", price: 3, available: 100, sold: 70 }
-    ];
-
-    function updateDashboard() {
-      let totalSales = products.reduce((sum, p) => sum + (p.price * p.sold), 0);
-      let totalOrders = products.reduce((sum, p) => sum + p.sold, 0);
-      let activeProducts = products.length;
-      let monthlyRevenue = totalSales;
-      let topProduct = products.length ? products.reduce((a,b)=>a.sold>b.sold?a:b).name : "N/A";
-
-      document.getElementById("totalSales").textContent = `$${totalSales}`;
-      document.getElementById("orderCount").textContent = totalOrders;
-      document.getElementById("activeProducts").textContent = activeProducts;
-      document.getElementById("monthlyRevenue").textContent = `$${monthlyRevenue}`;
-      document.getElementById("summaryRevenue").textContent = `$${totalSales}`;
-      document.getElementById("summaryOrders").textContent = totalOrders;
-      document.getElementById("topProduct").textContent = topProduct;
-
-      let tbody = document.getElementById("productTableBody");
-      tbody.innerHTML = "";
-      products.forEach(p => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${p.name}</td>
-            <td>${p.category}</td>
-            <td>$${p.price}</td>
-            <td>${p.available}</td>
-            <td>
-              <button class="btn btn-warning btn-sm">Edit</button>
-              <button class="btn btn-danger btn-sm">Delete</button>
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    document.getElementById("addProductForm").addEventListener("submit", function(e){
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const newProduct = {
-        id: Date.now(),
-        name: formData.get("name"),
-        category: "Sticker",
-        price: parseFloat(formData.get("price")),
-        available: parseInt(formData.get("quantity_available")),
-        sold: 0
-      };
-      products.push(newProduct);
-      updateDashboard();
-      e.target.reset();
-      bootstrap.Modal.getInstance(document.getElementById("addProductModal")).hide();
-    });
-
-    updateDashboard();
-  </script>
+  <script type="module" src="seller.js"></script>
 </body>
 </html>

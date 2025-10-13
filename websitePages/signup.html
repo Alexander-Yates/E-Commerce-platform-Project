@@ -5,86 +5,98 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      background-color: #FFF8E1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
+      color: #333333;
     }
 
     .brand-logo {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: bold;
-      color: #007bff;
+      color: #A97449;
       text-decoration: none;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
+      letter-spacing: 1px;
     }
 
     .brand-logo:hover {
-      color: #0056b3;
+      color: #8C5E35;
     }
 
     .signup-container {
-      background: white;
-      padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      background: #FFFDF5;
+      padding: 48px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       width: 90%;
       max-width: 400px;
     }
 
     .signup-container h2 {
       text-align: center;
-      margin-bottom: 20px;
-      color: #333;
+      margin-bottom: 25px;
+      color: #A97449;
+      font-weight: 600;
     }
 
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     .form-group label {
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       font-size: 14px;
-      color: #555;
+      color: #5C5C5C;
     }
 
     .form-group input {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      padding: 10px 12px;
+      border: 1px solid #D6C3A5;
+      border-radius: 8px;
       font-size: 14px;
+      background-color: #FFFAF0;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #A97449;
+      box-shadow: 0 0 4px rgba(169, 116, 73, 0.3);
     }
 
     .btn {
       width: 100%;
       padding: 12px;
-      background: #28a745;
-      color: white;
+      background: #A97449;
+      color: #FFF8E1;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
       transition: background 0.3s ease;
+      font-weight: 600;
     }
 
     .btn:hover {
-      background: #218838;
+      background: #8C5E35;
     }
 
     .extra-links {
       text-align: center;
-      margin-top: 15px;
+      margin-top: 20px;
       font-size: 14px;
     }
 
     .extra-links a {
-      color: #007bff;
+      color: #A97449;
       text-decoration: none;
+      font-weight: 500;
     }
 
     .extra-links a:hover {
@@ -92,16 +104,18 @@
     }
 
     .error-message {
-      color: red;
+      color: #C0392B;
       font-size: 14px;
       margin-bottom: 10px;
       display: none;
+      text-align: center;
     }
 
     .loader {
       display: none;
       text-align: center;
       margin-top: 10px;
+      color: #A97449;
     }
   </style>
 </head>

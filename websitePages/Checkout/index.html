@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doodle & Stick | Checkout</title>
+
+  <style>
+    :root {
+      --mustard: #d1a05a;
+      --peach: #f7a97b;
+      --teal: #4b8c8d;
+      --cream: #f5edd8;
+      --brown: #a46a42;
+      --text: #3b2f2f;
+      --shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    header {
+      background: var(--teal);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      margin: 0;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      box-shadow: var(--shadow);
+      border-left: 6px solid var(--mustard);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-weight: 600;
+      color: var(--brown);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: var(--brown);
+      margin-bottom: 0.4rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: var(--cream);
+      font-size: 1rem;
+      color: var(--text);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+      transition: 0.2s ease;
+    }
+
+    input:focus {
+      border-color: var(--peach);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(247,169,123,0.25);
+      background: #fff;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    #order-summary {
+      background: #fffdf7;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+
+    .summary-line.total {
+      border-top: 1px solid #e4d5b7;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      font-weight: 700;
+      color: var(--brown);
+    }
+
+    #place-order-btn {
+      width: 100%;
+      background: var(--peach);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    #place-order-btn:hover {
+      background: var(--mustard);
+      transform: translateY(-2px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: var(--brown);
+      background: var(--cream);
+      font-size: 0.9rem;
+    }
+
+    /* Order items styling */
+    #cart-items {
+      margin-bottom: 1rem;
+      border-radius: 12px;
+      background: var(--cream);
+      padding: 1rem;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e4d5b7;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .cart-item-name {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .cart-item-price {
+      font-weight: 600;
+      color: var(--teal);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Checkout</h1>
+  </header>
+
+  <main>
+    <!-- Customer Info -->
+    <section class="card">
+      <h2>Customer Information</h2>
+      <div class="form-group">
+        <label for="customer-name">Full Name</label>
+        <input type="text" id="customer-name" name="customerName" required />
+      </div>
+      <div class="form-group">
+        <label for="customer-email">Email</label>
+        <input type="email" id="customer-email" name="customerEmail" required />
+      </div>
+      <div class="form-group">
+        <label for="customer-phone">Phone</label>
+        <input type="tel" id="customer-phone" name="customerPhone" />
+      </div>
+    </section>
+
+    <!-- Shipping Address -->
+    <section class="card">
+      <h2>Shipping Address</h2>
+      <div class="form-group">
+        <label for="address-line1">Address Line 1</label>
+        <input type="text" id="address-line1" name="addressLine1" required />
+      </div>
+      <div class="form-group">
+        <label for="address-line2">Address Line 2</label>
+        <input type="text" id="address-line2" name="addressLine2" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" name="city" required />
+        </div>
+        <div class="form-group">
+          <label for="state">State</label>
+          <input type="text" id="state" name="state" required />
+        </div>
+        <div class="form-group">
+          <label for="zip">ZIP Code</label>
+          <input type="text" id="zip" name="zip" required />
+        </div>
+      </div>
+    </section>
+
+    <!-- Payment Info -->
+    <section class="card">
+      <h2>Payment Details</h2>
+      <div class="form-group">
+        <label for="card-name">Name on Card</label>
+        <input type="text" id="card-name" name="cardName" required />
+      </div>
+      <div class="form-group">
+        <label for="card-number">Card Number</label>
+        <input type="text" id="card-number" name="cardNumber" required />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="exp-date">Expiration (MM/YY)</label>
+          <input type="text" id="exp-date" name="expDate" required />
+        </div>
+        <div class="form-group">
+          <label for="cvv">CVV</label>
+          <input type="text" id="cvv" name="cvv" required />
+        </div>
+      </div>
+    </section>
+
+    <!-- Order Summary -->
+    <section class="card" id="order-summary">
+      <h2>Order Summary</h2>
+      <div id="cart-items">
+        <!-- JS will populate items -->
+        <div class="cart-item">
+          <span class="cart-item-name">Sticker Pack A</span>
+          <span class="cart-item-price">$8.00</span>
+        </div>
+        <div class="cart-item">
+          <span class="cart-item-name">Custom Doodle B</span>
+          <span class="cart-item-price">$12.00</span>
+        </div>
+      </div>
+
+      <div class="summary-line">
+        <span>Subtotal:</span>
+        <span id="subtotal">$20.00</span>
+      </div>
+      <div class="summary-line">
+        <span>Shipping:</span>
+        <span id="shipping-cost">$3.50</span>
+      </div>
+      <div class="summary-line total">
+        <span>Total:</span>
+        <span id="total-amount">$23.50</span>
+      </div>
+    </section>
+
+    <button id="place-order-btn">Place Order</button>
+  </main>
+
+  <footer>
+    © 2025 Doodle & Stick
+  </footer>
+
+  <script src="checkout.js"></script>
+</body>
+</html>

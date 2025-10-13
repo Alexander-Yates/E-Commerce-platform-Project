@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doodle & Stick | Cart</title>
+
+  <style>
+    :root {
+      --mustard: #d1a05a;
+      --peach: #f7a97b;
+      --teal: #4b8c8d;
+      --cream: #f5edd8;
+      --brown: #a46a42;
+      --text: #3b2f2f;
+      --shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    header {
+      background: var(--teal);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      margin: 0;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      box-shadow: var(--shadow);
+      border-left: 6px solid var(--mustard);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-weight: 600;
+      color: var(--brown);
+    }
+
+    /* Cart table layout */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background: var(--cream);
+      color: var(--brown);
+      font-weight: 600;
+      border-bottom: 2px solid var(--mustard);
+    }
+
+    tr:not(:last-child) td {
+      border-bottom: 1px solid #eee3c9;
+    }
+
+    td img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .quantity-btn {
+      background: var(--peach);
+      border: none;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .quantity-btn:hover {
+      background: var(--mustard);
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: var(--brown);
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .remove-btn:hover {
+      color: var(--peach);
+    }
+
+    .cart-summary {
+      background: #fffdf7;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      box-shadow: var(--shadow);
+      border-left: 5px solid var(--teal);
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.4rem 0;
+      font-size: 1rem;
+    }
+
+    .summary-line.total {
+      border-top: 1px solid #e4d5b7;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      font-weight: 700;
+      color: var(--brown);
+    }
+
+    .cart-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+      gap: 1rem;
+    }
+
+    .cart-btn {
+      padding: 0.9rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .continue-btn {
+      background: var(--cream);
+      color: var(--brown);
+      border: 1px solid var(--brown);
+    }
+
+    .continue-btn:hover {
+      background: var(--mustard);
+      color: white;
+    }
+
+    .checkout-btn {
+      background: var(--peach);
+      color: white;
+    }
+
+    .checkout-btn:hover {
+      background: var(--mustard);
+      transform: translateY(-2px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: var(--brown);
+      background: var(--cream);
+      font-size: 0.9rem;
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 2rem;
+      color: var(--brown);
+      font-weight: 500;
+      font-size: 1.1rem;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Your Cart</h1>
+  </header>
+
+  <main>
+    <!-- Cart Items -->
+    <section class="card">
+      <h2>Items in Your Cart</h2>
+
+      <div id="empty-cart-message" class="empty-cart" style="display: none;">
+        Your cart is empty — start shopping to add some fun stickers! 🛍️
+      </div>
+
+      <table id="cart-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="cart-items">
+          <!-- JS will populate this section -->
+          <tr>
+            <td><img src="sample-sticker.jpg" alt="Sample Sticker"></td>
+            <td>Sticker Pack A</td>
+            <td>$8.00</td>
+            <td>
+              <div class="quantity-control">
+                <button class="quantity-btn">-</button>
+                <span>1</span>
+                <button class="quantity-btn">+</button>
+              </div>
+            </td>
+            <td>$8.00</td>
+            <td><button class="remove-btn">Remove</button></td>
+          </tr>
+          <tr>
+            <td><img src="sample-sticker2.jpg" alt="Sample Sticker"></td>
+            <td>Custom Doodle B</td>
+            <td>$12.00</td>
+            <td>
+              <div class="quantity-control">
+                <button class="quantity-btn">-</button>
+                <span>1</span>
+                <button class="quantity-btn">+</button>
+              </div>
+            </td>
+            <td>$12.00</td>
+            <td><button class="remove-btn">Remove</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Cart Summary -->
+    <section class="cart-summary">
+      <div class="summary-line">
+        <span>Subtotal:</span>
+        <span id="subtotal">$20.00</span>
+      </div>
+      <div class="summary-line">
+        <span>Shipping:</span>
+        <span id="shipping">$3.50</span>
+      </div>
+      <div class="summary-line total">
+        <span>Total:</span>
+        <span id="total">$23.50</span>
+      </div>
+
+      <div class="cart-actions">
+        <button class="cart-btn continue-btn" onclick="window.location.href='index.html'">Continue Shopping</button>
+        <button class="cart-btn checkout-btn" onclick="window.location.href='/checkout/index.html'">Proceed to Checkout</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 Doodle & Stick
+  </footer>
+
+  <script src="cart.js"></script>
+</body>
+</html>

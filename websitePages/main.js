@@ -127,6 +127,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await client.auth.signOut();
     toggleNavState(false);
     alert("You’ve been logged out!");
-    window.location.href = "index.html";
+    window.location.href = "/index.html";
   });
 });

@@ -31,7 +31,7 @@ if (notifBtn) {
 if (logoutBtn) {
   logoutBtn.addEventListener("click", async () => {
     await client.auth.signOut();
-    window.location.href = "/websitePages/index.html";
+    window.location.href = "../index.html";
   });
 }
 

@@ -19,6 +19,7 @@ async function loadProducts() {
     price,
     category_id,
     is_active,
+    is_approved,
     image_url,
     seller_id,
     users!inner(email, username)

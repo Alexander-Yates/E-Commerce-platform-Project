@@ -73,7 +73,7 @@ async function loadProducts() {
 
     // approve button
     if (!product.is_approved) {
-      const actionsCell = tr.querySelector('#actions-${product.id}');
+      const actionsCell = tr.querySelector("td:last-child");
       const approveButton = document.createElement("button");
       approveButton.textContent = "Approve";
       approveButton.classList.add("approve-btn");

@@ -41,6 +41,12 @@ async function loadProducts() {
   listingsTableBody.innerHTML = "";
   products.forEach((product) => {
     const tr = document.createElement("tr");
+    const statusText = !product.is_approved
+      ? "Pending Approval"
+      : product.is_active
+      ? "Active"
+      : "Inactive";
+
     tr.innerHTML = `
       <td>
         ${product.image_url
@@ -57,13 +63,32 @@ async function loadProducts() {
         </td>
       <td>${product.category_id ?? "Uncategorized"}</td>
       <td>$${product.price?.toFixed(2) ?? "N/A"}</td>
-      <td>${product.is_active ? "✅ Active" : "❌ Inactive"}</td>
-      <td>
+      <td>${statusText}</td>
+      <td id="actions-${product.id}">
         <button class="delete-btn" data-id="${product.id}">${
       product.is_active ? "Deactivate" : "Reactivate"
     }</button>
       </td>
     `;
+
+    // approve button
+    if (!product.is_approved) {
+      const actionsCell = tr.querySelector('#actions-${product.id}');
+      const approveButton = document.createElement("button");
+      approveButton.textContent = "Approve";
+      approveButton.classList.add("approve-btn");
+      approveButton.setAttribute("data-id", product.id);
+
+      approveButton.style.marginLeft = "10px";
+      approveButton.style.backgroundColor = "#4CAF50"
+      approveButton.style.color = "white";
+      approveButton.style.border = "none";
+      approveButton.style.borderRadius = "6px";
+      approveButton.style.padding = "6px 10px";
+      approveButton.style.cursor = "pointer";
+
+      actionsCell.appendChild(approveButton);
+    }
     listingsTableBody.appendChild(tr);
   });
 }
@@ -93,6 +118,27 @@ document.addEventListener("click", async (e) => {
     }
 
     alert("Product status updated!");
+    loadProducts();
+  }
+
+  // Admin approval handler
+  if (e.target.classList.contains("approve-btn")){
+    const id = e.target.getAttribute("data-id");
+    const confirmAction = confirm("Approve this product for sale?");
+    if(!confirmAction) return;
+
+    const { error } = await client
+      .from("products")
+      .update({ is_approved: true, updated_at: new Date() })
+      .eq("id", id);
+
+    if (error) {
+      alert("Error approving product: " + error.message);
+      console.error(error);
+      return;
+    }
+
+    alert("Product approved successfully!");
     loadProducts();
   }
 });

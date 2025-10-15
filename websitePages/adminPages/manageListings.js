@@ -129,7 +129,7 @@ document.addEventListener("click", async (e) => {
 
     const { error } = await client
       .from("products")
-      .update({ is_approved: true, updated_at: new Date() })
+      .update({ is_approved: true, is_active: true, updated_at: new Date() })
       .eq("id", id);
 
     if (error) {

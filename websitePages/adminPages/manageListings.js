@@ -66,7 +66,7 @@ async function loadProducts() {
       <td>$${product.price?.toFixed(2) ?? "N/A"}</td>
       <td>${statusText}</td>
       <td id="actions-${product.id}">
-        <button class="delete-btn" data-id="${product.id}">${
+        <button class="delete-btn" data-id="${product.id}" data-active="${product.is_active}">${
       product.is_active ? "Deactivate" : "Reactivate"
     }</button>
       </td>
@@ -98,10 +98,9 @@ async function loadProducts() {
 document.addEventListener("click", async (e) => {
   if (e.target.classList.contains("delete-btn")) {
     const id = e.target.getAttribute("data-id");
-    const currentRow = e.target.closest("tr");
-    const currentStatus = currentRow.cells[4].innerText.includes("✅");
+    const isActive = e.target.getAttribute("data-active") == "true";
     const confirmAction = confirm(
-      currentStatus
+      isActive
         ? "Are you sure you want to deactivate this listing?"
         : "Reactivate this listing?"
     );
@@ -109,7 +108,7 @@ document.addEventListener("click", async (e) => {
 
     const { error } = await client
       .from("products")
-      .update({ is_active: !currentStatus })
+      .update({ is_active: !isActive })
       .eq("id", id);
 
     if (error) {

@@ -100,35 +100,56 @@
     }
 
     .quantity-btn {
-      background: var(--peach);
-      border: none;
-      color: white;
-      font-size: 1rem;
-      font-weight: 600;
       width: 28px;
       height: 28px;
+      border: none;
+      background: var(--peach);
+      color: white;
       border-radius: 6px;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: all 0.2s ease;
     }
-
     .quantity-btn:hover {
       background: var(--mustard);
     }
-
+    .quantity-control span.qty {
+      min-width: 24px;
+      text-align: center;
+      display: inline-block;
+    }
+    /* Stylish Remove Button */
     .remove-btn {
-      background: none;
+      background: var(--peach);
+      color: white;
       border: none;
-      color: var(--brown);
+      border-radius: 8px;
+      padding: 0.45rem 0.9rem;
       font-weight: 600;
+      font-size: 0.9rem;
       cursor: pointer;
-      transition: color 0.2s ease;
+      box-shadow: var(--shadow);
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .remove-btn::before {
+      content: "🗑️"; 
+      font-size: 0.9rem;
     }
 
     .remove-btn:hover {
-      color: var(--peach);
+      background: var(--mustard);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
     }
 
+    .remove-btn:active {
+      transform: scale(0.96);
+      background: var(--brown);
+    }
     .cart-summary {
       background: #fffdf7;
       border-radius: 12px;
@@ -206,6 +227,69 @@
       font-size: 1.1rem;
     }
 
+    /* Modal styling */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal-box {
+      background: var(--cream);
+      padding: 1.8rem 2.2rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      width: 320px;
+      border-left: 6px solid var(--peach);
+    }
+    .modal-box h3 {
+      color: var(--brown);
+      margin-top: 0;
+    }
+    .modal-actions {
+     margin-top: 1.2rem;
+     display: flex;
+     justify-content: center;
+     gap: 1rem;
+    }
+    .modal-btn {
+      padding: 0.6rem 1.4rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .cancel-btn {
+      background: var(--cream);
+      color: var(--brown);
+      border: 1px solid var(--brown);
+    }
+    .cancel-btn:hover {
+      background: var(--mustard);
+      color: white;
+    }
+    .confirm-btn {
+      background: var(--peach);
+      color: white;
+    }
+    .confirm-btn:hover {
+      background: var(--mustard);
+    }
+    @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+    @keyframes fadeOut { from {opacity:1;} to {opacity:0;} }
+
+    /* Row fade-out animation */
+    .fade-out {
+      animation: fadeOut 0.3s ease forwards;
+    }
+
+
   </style>
 </head>
 
@@ -236,34 +320,6 @@
         </thead>
         <tbody id="cart-items">
           <!-- JS will populate this section -->
-          <tr>
-            <td><img src="sample-sticker.jpg" alt="Sample Sticker"></td>
-            <td>Sticker Pack A</td>
-            <td>$8.00</td>
-            <td>
-              <div class="quantity-control">
-                <button class="quantity-btn">-</button>
-                <span>1</span>
-                <button class="quantity-btn">+</button>
-              </div>
-            </td>
-            <td>$8.00</td>
-            <td><button class="remove-btn">Remove</button></td>
-          </tr>
-          <tr>
-            <td><img src="sample-sticker2.jpg" alt="Sample Sticker"></td>
-            <td>Custom Doodle B</td>
-            <td>$12.00</td>
-            <td>
-              <div class="quantity-control">
-                <button class="quantity-btn">-</button>
-                <span>1</span>
-                <button class="quantity-btn">+</button>
-              </div>
-            </td>
-            <td>$12.00</td>
-            <td><button class="remove-btn">Remove</button></td>
-          </tr>
         </tbody>
       </table>
     </section>
@@ -288,12 +344,27 @@
         <button class="cart-btn checkout-btn" onclick="window.location.href='/checkout/index.html'">Proceed to Checkout</button>
       </div>
     </section>
+
+<!-- Reusable Confirmation Modal -->
+<div id="confirmModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <h3 id="modalTitle">Confirm Action</h3>
+    <p id="modalMessage">Are you sure?</p>
+    <div class="modal-actions">
+      <button id="modalCancel" class="modal-btn cancel-btn">Cancel</button>
+      <button id="modalConfirm" class="modal-btn confirm-btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+
   </main>
 
   <footer>
     © 2025 Doodle & Stick
   </footer>
 
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="cart.js"></script>
 </body>
 </html>

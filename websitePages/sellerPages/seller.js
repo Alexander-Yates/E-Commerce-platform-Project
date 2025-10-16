@@ -222,6 +222,7 @@ if (file) {
         description,
         category_id: category,
         is_active: true,
+        is_approved: false,
         created_at: new Date(),
         updated_at: new Date(),
         image_url: imageUrl,

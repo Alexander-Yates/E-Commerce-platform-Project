@@ -53,8 +53,77 @@ async function loadProducts() {
       </div>
     `;
     productsGrid.appendChild(productDiv);
+
+    const addBtn = productDiv.querySelector(".add-btn");
+    addBtn.addEventListener("click", () => addToCart(product.id));
   });
 }
+// =======================
+// ADD TO CART FUNCTIONALITY
+// =======================
+
+async function addToCart(productId) {
+  try {
+    const { data: { user }, error: userError } = await client.auth.getUser();
+    if (userError || !user) {
+      alert("Please log in to add items to your cart.");
+      return;
+    }
+
+    // 1️⃣ Get or create cart for buyer
+    let { data: existingCart, error: cartError } = await client
+      .from("carts")
+      .select("id")
+      .eq("buyer_id", user.id)
+      .limit(1);
+
+    if (cartError) throw cartError;
+
+    let cartId;
+    if (!existingCart || existingCart.length === 0) {
+      const { data: newCart, error: newCartError } = await client
+        .from("carts")
+        .insert([{ buyer_id: user.id }])
+        .select("id")
+        .single();
+      if (newCartError) throw newCartError;
+      cartId = newCart.id;
+    } else {
+      cartId = existingCart[0].id;
+    }
+
+    // 2️⃣ Check if product already in cart_items
+    const { data: existingItem, error: itemError } = await client
+      .from("cart_items")
+      .select("id, quantity")
+      .eq("cart_id", cartId)
+      .eq("product_id", productId)
+      .maybeSingle();
+
+    if (itemError) throw itemError;
+
+    if (existingItem) {
+      // 3️⃣ Update quantity
+      const { error: updateError } = await client
+        .from("cart_items")
+        .update({ quantity: existingItem.quantity + 1 })
+        .eq("id", existingItem.id);
+      if (updateError) throw updateError;
+    } else {
+      // 4️⃣ Insert new cart item
+      const { error: insertError } = await client
+        .from("cart_items")
+        .insert([{ cart_id: cartId, product_id: productId, quantity: 1 }]);
+      if (insertError) throw insertError;
+    }
+
+    alert("🛒 Added to cart successfully!");
+  } catch (err) {
+    console.error("Add to cart error:", err.message);
+    alert("Failed to add item to cart.");
+  }
+}
+
 
 // Load products on page load
 loadProducts();

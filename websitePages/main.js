@@ -45,9 +45,11 @@ async function loadProducts() {
     const productDiv = document.createElement("div");
     productDiv.className = "product";
     productDiv.innerHTML = `
-      <img src="${product.image_url || 'https://placehold.co/300x200'}" alt="${product.name}">
+      <a href="product.html?id=${product.id}">
+        <img src="${product.image_url || 'https://placehold.co/300x200'}" alt="${product.name}">
+      </a>
       <div class="product-info">
-        <h3>${product.name}</h3>
+        <h3><a href="product.html?id=${product.id}" style="text-decoration:none; color:#a46a42;">${product.name}</a></h3>
         <p>$${parseFloat(product.price).toFixed(2)}</p>
         <button class="add-btn" data-id="${product.id}">Add to Cart</button>
       </div>

@@ -289,6 +289,29 @@
       animation: fadeOut 0.3s ease forwards;
     }
 
+    .logout-btn {
+      background: var(--peach);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .logout-btn:hover {
+      background: var(--mustard);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    }
+
+    .logout-btn:active {
+      transform: scale(0.96);
+      background: var(--brown);
+    }
+
 
   </style>
 </head>
@@ -296,7 +319,9 @@
 <body>
   <header>
     <h1>Your Cart</h1>
+    <button id="logoutBtn" class="logout-btn">Logout</button>
   </header>
+
 
   <main>
     <!-- Cart Items -->
@@ -339,7 +364,7 @@
         <span id="total">$23.50</span>
       </div>
 
-      <div class="cart-actions">
+      <div class="cart-actions"> <!-- will need to change file str for prod -->
         <button class="cart-btn continue-btn" onclick="window.location.href='../index.html'">Continue Shopping</button>
         <button class="cart-btn checkout-btn" onclick="window.location.href='/checkout/index.html'">Proceed to Checkout</button>
       </div>

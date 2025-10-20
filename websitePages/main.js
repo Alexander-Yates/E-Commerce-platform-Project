@@ -33,6 +33,7 @@ async function loadProducts(searchTerm = "") {
     .from("products")
     .select("*, categories(name)")
     .eq("is_active", true)
+    .eq("is_approved", true)
     .order("created_at", { ascending: false })
     .limit(20);
 
@@ -57,11 +58,13 @@ async function loadProducts(searchTerm = "") {
 
   products.forEach(product => {
     const productDiv = document.createElement("div");
-    productDiv.className = "product";
+    productDiv.className = "product"; // change the innerHTML before prod
     productDiv.innerHTML = `
-      <img src="${product.image_url || 'https://placehold.co/300x200'}" alt="${product.name}">
+       <a href="/product.html?id=${product.id}">
+        <img src="${product.image_url || 'https://placehold.co/300x200'}" alt="${product.name}">
+      </a>
       <div class="product-info">
-        <h3>${product.name}</h3>
+        <h3><a href="product.html?id=${product.id}" style="text-decoration:none; color:#a46a42;">${product.name}</a></h3> 
         <p>$${parseFloat(product.price).toFixed(2)}</p>
         <button class="add-btn" data-id="${product.id}">Add to Cart</button>
       </div>
@@ -223,6 +226,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await client.auth.signOut();
     toggleNavState(false);
     alert("You’ve been logged out!");
-    window.location.href = "/index.html";
+    window.location.href = "/index.html"; // change back for prod
   });
 });

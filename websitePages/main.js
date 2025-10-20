@@ -226,6 +226,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await client.auth.signOut();
     toggleNavState(false);
     alert("You’ve been logged out!");
-    window.location.href = "/websitePages/index.html"; // change back for prod
+    window.location.href = "/index.html"; // change back for prod
   });
 });

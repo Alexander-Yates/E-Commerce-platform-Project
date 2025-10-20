@@ -4,6 +4,9 @@
 const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
 
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
+
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
     persistSession: true,
@@ -25,14 +28,20 @@ window.addEventListener("scroll", () => {
 });
 
 // Load products dynamically from Supabase
-async function loadProducts() {
-  const { data: products, error } = await client
+async function loadProducts(searchTerm = "") {
+  let query = client
     .from("products")
-    .select("*")
+    .select("*, categories(name)")
     .eq("is_active", true)
     .eq("is_approved", true)
     .order("created_at", { ascending: false })
     .limit(20);
+
+  if (searchTerm) {
+    query = query.ilike("name", `%${searchTerm}%`);
+  }
+
+  const { data: products, error } = await query;
 
   if (error) {
     console.error("Error fetching products:", error);
@@ -41,6 +50,11 @@ async function loadProducts() {
 
   const productsGrid = document.getElementById("productsGrid");
   productsGrid.innerHTML = "";
+
+  if (products.length === 0) {
+    productsGrid.innerHTML = "<p style='text-align:center;'>No products found.</p>";
+    return;
+  }
 
   products.forEach(product => {
     const productDiv = document.createElement("div");
@@ -61,6 +75,19 @@ async function loadProducts() {
     addBtn.addEventListener("click", () => addToCart(product.id));
   });
 }
+
+searchBtn.addEventListener("click", () => {
+  const term = searchInput.value.trim();
+  loadProducts(term);
+});
+
+searchInput.addEventListener("keyup", (e) => {
+  if (e.key === "Enter") {
+    const term = searchInput.value.trim();
+    loadProducts(term);
+  }
+});
+
 // =======================
 // ADD TO CART FUNCTIONALITY
 // =======================

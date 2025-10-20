@@ -171,6 +171,64 @@
       margin-top: 3rem;
       font-size: 0.95rem;
     }
+
+    /* Search Section */
+    .search-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 0 0 0;
+      background: var(--cream);
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 0.5rem;
+      width: 80%;
+      max-width: 500px;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .search-input::placeholder {
+      color: #9c8f8f;
+    }
+
+    .search-btn {
+      background: var(--peach);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .search-btn:hover {
+      background: var(--mustard);
+      transform: translateY(-2px);
+    }
+    
+    .search-input:focus {
+      box-shadow: 0 0 0 2px var(--teal);
+      border-radius: 8px;
+    }
+    
   </style>
 </head>
 
@@ -198,6 +256,18 @@
   <section class="featured">
     <h2>Featured Collections</h2>
     <p>From cute doodles to bold designs — find stickers that fit your vibe.</p>
+  </section>
+
+  <!-- Search Bar -->
+  <section class="search-section">
+    <div class="search-container">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search for stickers, doodles, or prints..." 
+        class="search-input">
+      <button id="searchBtn" class="search-btn">Search</button>
+    </div>
   </section>
 
   <!-- Product Grid -->

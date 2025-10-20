@@ -60,7 +60,7 @@ async function loadProducts(searchTerm = "") {
     const productDiv = document.createElement("div");
     productDiv.className = "product"; // change the innerHTML before prod
     productDiv.innerHTML = `
-       <a href="/ProductPreview/product.html?id=${product.id}">
+       <a href="/product.html?id=${product.id}">
         <img src="${product.image_url || 'https://placehold.co/300x200'}" alt="${product.name}">
       </a>
       <div class="product-info">

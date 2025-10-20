@@ -221,6 +221,28 @@ async function removeItem(cartItemId, rowElement) {
   });
 }
 
+// =======================
+// LOGOUT FUNCTIONALITY
+// =======================
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  showModal({
+    title: "Log Out",
+    message: "Are you sure you want to log out?",
+    confirmText: "Logout",
+    cancelText: "Cancel",
+    onConfirm: async () => {
+      const { error } = await client.auth.signOut();
+      if (error) {
+        alert("Logout failed. Please try again.");
+        console.error("Logout error:", error);
+        return;
+      }
+      // Redirect to main buyer page or login
+      window.location.href = "../index.html";
+    },
+  });
+});
+
 
 
 document.addEventListener("DOMContentLoaded", loadCart);

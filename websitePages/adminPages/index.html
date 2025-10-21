@@ -7,11 +7,11 @@
 
   <style>
     :root {
-      --mustard: #d1a05a;    /* Dull Yellow */
-      --peach: #f7a97b;      /* Light Orange */
-      --teal: #4b8c8d;       /* Muted Teal */
-      --cream: #f5edd8;      /* Soft Cream */
-      --brown: #a46a42;      /* Warm Brown */
+      --mustard: #d1a05a;    
+      --peach: #f7a97b;      
+      --teal: #4b8c8d;       /* Color palette */
+      --cream: #f5edd8;      
+      --brown: #a46a42;      
       --text: #3b2f2f;
       --shadow: 0 4px 10px rgba(0,0,0,0.08);
     }
@@ -227,7 +227,7 @@
       background: var(--cream);
       font-weight: 600;
     }
-    /* ---------- Modal Styles ---------- */
+    
     .modal-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -328,7 +328,7 @@
       background: var(--mustard);
     }
     
-    /* ---------- Action Button Styles ---------- */
+    
     button.editUserBtn,
     button.deleteUserBtn {
       -family: 'Poppins', sans-serif;
@@ -341,7 +341,7 @@
       transition: background 0.25s, transform 0.15s;
     }
 
-    /* Edit (teal → mustard hover) */
+    /* Edit */
     button.editUserBtn {
       background: var(--teal);
       color: white;
@@ -352,7 +352,7 @@
       transform: translateY(-1px);
     }
 
-    /* Delete (soft red → deeper red hover) */
+    /* Delete */
     button.deleteUserBtn {
       background: #e57373; /* soft red */
       color: white;
@@ -362,7 +362,6 @@
       transform: translateY(-1px);
     }
 
-    /* Optional subtle table alignment */
     #usersTable td:last-child {
       text-align: center;
     }
@@ -397,7 +396,7 @@
 
 
   <main>
-    <!-- Overview -->
+    
     <section id="overview" class="card">
       <h2>Overview</h2>
       <div class="stats">
@@ -408,7 +407,7 @@
       </div>
     </section>
 
-    <!-- User Management -->
+    
     <section class="card">
       <h2>
         User Management
@@ -426,7 +425,7 @@
       </table>
     </section>
 
-    <!-- Transactions -->
+    
     <section class="card">
       <h2>Recent Transactions</h2>
       <table id="transactionsTable">
@@ -437,7 +436,7 @@
       </table>
     </section>
 
-    <!-- Disputes -->
+   
     <section class="card">
       <h2>Disputes</h2>
       <table id="disputesTable">
@@ -448,7 +447,7 @@
       </table>
     </section>
 
-    <!-- Buyers Modal -->
+    
   <div id="buyersModal" class="modal-overlay" style="display:none;">
     <div class="modal-content">
       <h2>Current Buyers</h2>
@@ -462,7 +461,7 @@
     </div>
   </div>
 
-  <!-- Sellers Modal -->
+  
 <div id="sellersModal" class="modal-overlay" style="display:none;">
   <div class="modal-content">
     <h2>Current Sellers</h2>
@@ -476,7 +475,7 @@
   </div>
 </div>
 
-<!-- Create User Modal -->
+
 <div id="createUserModal" class="modal-overlay" style="display:none;">
   <div class="modal-content">
     <h2>Create New User</h2>
@@ -507,7 +506,7 @@
   </div>
 </div>
 
-<!-- Edit User Modal -->
+
 <div id="editUserModal" class="modal-overlay" style="display:none;">
   <div class="modal-content">
     <h2>Edit User</h2>
@@ -538,7 +537,7 @@
   </div>
 </div>
 
-<!-- Delete User Modal -->
+
 <div id="deleteUserModal" class="modal-overlay" style="display:none;">
   <div class="modal-content" style="max-width: 400px; text-align: center;">
     <h2>Confirm Deletion</h2>

@@ -15,10 +15,20 @@ async function loadProduct() {
   }
 
   const { data: product, error } = await client
-    .from("products")
-    .select("*")
-    .eq("id", productId)
-    .single();
+  .from("products")
+  .select(`
+    id,
+    name,
+    description,
+    price,
+    image_url,
+    quantity_available,
+    category_id,
+    categories(name)
+  `)
+  .eq("id", productId)
+  .single();
+
 
   if (error || !product) {
     console.error("Error fetching product:", error);
@@ -35,7 +45,7 @@ async function loadProduct() {
       <h1>${product.name}</h1>
       <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
       <p><strong>Description:</strong> ${product.description || 'No description available.'}</p>
-      <p><strong>Category:</strong> ${product.category || 'Uncategorized'}</p>
+      <p><strong>Category:</strong> ${product.categories?.name || 'Uncategorized'}</p>
       <button class="add-btn" id="addToCartBtn">Add to Cart</button>
     </div>
   `;
@@ -43,7 +53,6 @@ async function loadProduct() {
   document.getElementById("addToCartBtn").addEventListener("click", () => addToCart(product.id));
 }
 
-// Reuse your existing addToCart logic
 async function addToCart(productId) {
   try {
     const { data: { user }, error: userError } = await client.auth.getUser();
@@ -95,7 +104,7 @@ async function addToCart(productId) {
       if (insertError) throw insertError;
     }
 
-    alert("🛒 Added to cart!");
+    alert("Added to cart!");
   } catch (err) {
     console.error("Add to cart error:", err.message);
     alert("Failed to add item to cart.");

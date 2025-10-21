@@ -199,7 +199,7 @@ document.getElementById("place-order-btn").addEventListener("click", async () =>
     confirmText: "Pay Now",
     cancelText: "Cancel",
     onConfirm: async () => {
-      // 🕓 Simulate "processing payment"
+      // Simulate "processing payment"
       const processingModal = document.createElement("div");
       processingModal.style = `
         position: fixed;

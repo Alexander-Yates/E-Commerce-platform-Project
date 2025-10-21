@@ -9,7 +9,7 @@
     :root {
       --mustard: #d1a05a;
       --peach: #f7a97b;
-      --teal: #4b8c8d;
+      --teal: #4b8c8d; /* Our wonderful color scheme */
       --cream: #f5edd8;
       --brown: #a46a42;
       --text: #3b2f2f;
@@ -118,7 +118,7 @@
       text-align: center;
       display: inline-block;
     }
-    /* Stylish Remove Button */
+    /* Remove Button */
     .remove-btn {
       background: var(--peach);
       color: white;
@@ -324,7 +324,6 @@
 
 
   <main>
-    <!-- Cart Items -->
     <section class="card">
       <h2>Items in Your Cart</h2>
 
@@ -343,13 +342,10 @@
             <th>Action</th>
           </tr>
         </thead>
-        <tbody id="cart-items">
-          <!-- JS will populate this section -->
-        </tbody>
+        <tbody id="cart-items"></tbody>
       </table>
     </section>
 
-    <!-- Cart Summary -->
     <section class="cart-summary">
       <div class="summary-line">
         <span>Subtotal:</span>
@@ -370,23 +366,22 @@
       </div>
     </section>
 
-<!-- Reusable Confirmation Modal -->
-<div id="confirmModal" class="modal-overlay" style="display:none;">
-  <div class="modal-box">
-    <h3 id="modalTitle">Confirm Action</h3>
-    <p id="modalMessage">Are you sure?</p>
-    <div class="modal-actions">
-      <button id="modalCancel" class="modal-btn cancel-btn">Cancel</button>
-      <button id="modalConfirm" class="modal-btn confirm-btn">Confirm</button>
+    <div id="confirmModal" class="modal-overlay" style="display:none;">
+      <div class="modal-box">
+        <h3 id="modalTitle">Confirm Action</h3>
+        <p id="modalMessage">Are you sure?</p>
+        <div class="modal-actions">
+          <button id="modalCancel" class="modal-btn cancel-btn">Cancel</button>
+          <button id="modalConfirm" class="modal-btn confirm-btn">Confirm</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
 
   </main>
 
   <footer>
-    © 2025 Doodle & Stick
+    Doodle & Stick © 2025 <!-- Fun copyright yayay-->
   </footer>
 
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>

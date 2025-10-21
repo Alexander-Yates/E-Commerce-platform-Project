@@ -14,12 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const contactBtn = document.getElementById("contactAdminBtn");
 
   if (!contactBtn) {
-    console.error("❌ contactAdminBtn not found in DOM");
+    console.error("contactAdminBtn not found in DOM");
     return;
   }
 
   contactBtn.addEventListener("click", async () => {
-    console.log("📩 Contact Admin button clicked");
+    console.log("Contact Admin button clicked");
 
     // Get currently logged-in user
     const {
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      alert("⚠️ Please log in before applying to be a seller.");
+      alert("Please log in before applying to be a seller.");
       return;
     }
 
@@ -43,11 +43,11 @@ document.addEventListener("DOMContentLoaded", () => {
         .ilike("message", `%${userEmail}%`);
 
       if (fetchError) {
-        console.warn("⚠️ Could not check existing requests:", fetchError);
+        console.warn("Could not check existing requests:", fetchError);
       }
 
       if (existingRequests && existingRequests.length > 0) {
-        alert("✅ You’ve already sent a seller request! Please wait for admin approval.");
+        alert("You’ve already sent a seller request! Please wait for admin approval.");
         return;
       }
 
@@ -63,15 +63,15 @@ document.addEventListener("DOMContentLoaded", () => {
       ]);
 
       if (insertError) {
-        console.error("❌ Error inserting notification:", insertError);
+        console.error("Error inserting notification:", insertError);
         alert("There was a problem sending your request. Please try again later.");
         return;
       }
 
-      alert("🎉 Your seller request has been sent to the admin!");
-      console.log("✅ Seller request notification added for:", userEmail);
+      alert("Your seller request has been sent to the admin!");
+      console.log("Seller request notification added for:", userEmail);
     } catch (err) {
-      console.error("❌ Network or execution error:", err);
+      console.error("Network or execution error:", err);
       alert("Network error. Please check your connection or try again later.");
     }
   });

@@ -100,7 +100,7 @@ async function addToCart(productId) {
       return;
     }
 
-    // 1️⃣ Get or create cart for buyer
+    // Get or create cart for buyer
     let { data: existingCart, error: cartError } = await client
       .from("carts")
       .select("id")
@@ -122,7 +122,7 @@ async function addToCart(productId) {
       cartId = existingCart[0].id;
     }
 
-    // 2️⃣ Check if product already in cart_items
+    // Check if product already in cart_items
     const { data: existingItem, error: itemError } = await client
       .from("cart_items")
       .select("id, quantity")
@@ -133,21 +133,21 @@ async function addToCart(productId) {
     if (itemError) throw itemError;
 
     if (existingItem) {
-      // 3️⃣ Update quantity
+      // Update quantity
       const { error: updateError } = await client
         .from("cart_items")
         .update({ quantity: existingItem.quantity + 1 })
         .eq("id", existingItem.id);
       if (updateError) throw updateError;
     } else {
-      // 4️⃣ Insert new cart item
+      // Insert new cart item
       const { error: insertError } = await client
         .from("cart_items")
         .insert([{ cart_id: cartId, product_id: productId, quantity: 1 }]);
       if (insertError) throw insertError;
     }
 
-    alert("🛒 Added to cart successfully!");
+    alert("Added to cart successfully!");
   } catch (err) {
     console.error("Add to cart error:", err.message);
     alert("Failed to add item to cart.");

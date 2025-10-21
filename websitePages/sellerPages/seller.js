@@ -207,7 +207,7 @@ if (file) {
       return;
     }
 
-    alert("✅ Product updated successfully!");
+    alert("Product updated successfully!");
     editingProductId = null;
     document.getElementById("modalTitle").textContent = "Add New Product";
     document.getElementById("saveProductBtn").textContent = "Save Product";
@@ -235,7 +235,7 @@ if (file) {
       return;
     }
 
-    alert("✅ Product added successfully!");
+    alert(" Product added successfully!");
   }
 
   addProductModal.style.display = "none";

@@ -1,16 +1,14 @@
-// ---------- Supabase setup ----------
+// admin.js
 const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ---------- DOM Elements ----------
 const notifBtn = document.getElementById("notifBtn");
 const notifBadge = document.getElementById("notifBadge");
 const notifDropdown = document.getElementById("notifDropdown");
 const logoutBtn = document.getElementById("logoutBtn");
 
-// Buyers modal elements (present in index.html)
 const showBuyersBtn = document.getElementById("showBuyersBtn");
 const buyersModal = document.getElementById("buyersModal");
 const buyersTableBody = document.querySelector("#buyersTable tbody");
@@ -18,7 +16,7 @@ const closeBuyersBtn = document.getElementById("closeBuyersBtn");
 
 let unreadCount = 0;
 
-// ---------- Dropdown toggle ----------
+// dropdown
 if (notifBtn) {
   notifBtn.addEventListener("click", () => {
     notifDropdown.classList.toggle("show");
@@ -27,7 +25,7 @@ if (notifBtn) {
   });
 }
 
-// ---------- Logout ----------
+// logout
 if (logoutBtn) {
   logoutBtn.addEventListener("click", async () => {
     await client.auth.signOut();
@@ -35,7 +33,7 @@ if (logoutBtn) {
   });
 }
 
-// ---------- Listen for notifications ----------
+// listens for notifications
 client
   .channel("notifications-realtime")
   .on(
@@ -51,7 +49,7 @@ client
   )
   .subscribe();
 
-// ---------- Add notification to dropdown ----------
+// add notification to bell icon dropdown
 function addNotification(notif) {
   const p = document.createElement("p");
   p.classList.add("unread");
@@ -66,13 +64,13 @@ function addNotification(notif) {
   notifBadge.style.display = "block";
 }
 
-// ---------- Extract user email ----------
+// get user email
 function extractEmail(msg) {
   const match = msg.match(/User (.+?) has requested/);
   return match ? match[1] : null;
 }
 
-// ---------- Approve seller button ----------
+// approve seller
 notifDropdown.addEventListener("click", async (e) => {
   if (e.target.classList.contains("approveBtn")) {
     const email = e.target.getAttribute("data-email");
@@ -82,7 +80,7 @@ notifDropdown.addEventListener("click", async (e) => {
     if (error) {
       alert("Error approving seller: " + error.message);
     } else {
-      e.target.textContent = "✅ Approved";
+      e.target.textContent = "Approved";
       e.target.disabled = true;
       e.target.style.background = "#4b8c8d";
       showToast(`${email} is now a seller!`);
@@ -90,11 +88,11 @@ notifDropdown.addEventListener("click", async (e) => {
   }
 });
 
-// ---------- Toast message ----------
+// toast for notification popup
 function showToast(message) {
   const toast = document.createElement("div");
   toast.className = "toast";
-  toast.textContent = "📩 " + message;
+  toast.textContent = message;
   document.body.appendChild(toast);
   toast.style.position = "fixed";
   toast.style.bottom = "20px";
@@ -111,12 +109,12 @@ function showToast(message) {
     toast.style.opacity = "0";
     setTimeout(() => toast.remove(), 400);
   }, 4000);
-} // ← closes showToast correctly
+} 
 
-// ---------- Overview Stats Loader ----------
+// loads the stats in the overview
 async function loadOverviewStats() {
   try {
-    // Buyers
+    // buyers
     const { count: buyerCount, error: buyerError } = await client
       .from("users")
       .select("*", { count: "exact", head: true })
@@ -125,7 +123,7 @@ async function loadOverviewStats() {
 
     if (buyerError) console.error("Error loading buyers:", buyerError);
 
-    // Sellers
+    // sellers
     const { count: sellerCount, error: sellerError } = await client
       .from("users")
       .select("*", { count: "exact", head: true })
@@ -134,14 +132,14 @@ async function loadOverviewStats() {
 
     if (sellerError) console.error("Error loading sellers:", sellerError);
 
-    // Transactions (assuming you have an 'orders' table)
+    // transcations
     const { count: transactionCount, error: txError } = await client
       .from("orders")
       .select("*", { count: "exact", head: true });
 
     if (txError) console.error("Error loading transactions:", txError);
 
-    // Disputes (assuming you have a 'disputes' table)
+    // disputes
     const { count: disputeCount, error: disputeError } = await client
       .from("disputes")
       .select("*", { count: "exact", head: true })
@@ -149,7 +147,7 @@ async function loadOverviewStats() {
 
     if (disputeError) console.error("Error loading disputes:", disputeError);
 
-    // Update the UI
+    // update the UI
     document.getElementById("buyerCount").textContent = buyerCount ?? 0;
     document.getElementById("sellerCount").textContent = sellerCount ?? 0;
     document.getElementById("transactionCount").textContent = transactionCount ?? 0;
@@ -160,13 +158,13 @@ async function loadOverviewStats() {
   }
 }
 
-// Load stats on page load
+// load stats on page load
 document.addEventListener("DOMContentLoaded", loadOverviewStats);
 
-// ---------- View Buyers Modal ----------
+// view buyers
 if (showBuyersBtn) {
   showBuyersBtn.addEventListener("click", async () => {
-    console.log("👀 View Buyers clicked");
+    console.log("View Buyers clicked");
     buyersModal.style.display = "flex";
     buyersTableBody.innerHTML = `<tr><td colspan="3">Loading buyers...</td></tr>`;
 
@@ -215,7 +213,7 @@ window.addEventListener("click", (e) => {
   if (e.target === buyersModal) buyersModal.style.display = "none";
 });
 
-// ---------- View Sellers Modal ----------
+// view sellers
 const showSellersBtn = document.getElementById("showSellersBtn");
 const sellersModal = document.getElementById("sellersModal");
 const sellersTableBody = document.querySelector("#sellersTable tbody");
@@ -223,11 +221,11 @@ const closeSellersBtn = document.getElementById("closeSellersBtn");
 
 if (showSellersBtn) {
   showSellersBtn.addEventListener("click", async () => {
-    console.log("🛍️ View Sellers clicked");
+    console.log("View Sellers clicked");
     sellersModal.style.display = "flex";
     sellersTableBody.innerHTML = `<tr><td colspan="3">Loading sellers...</td></tr>`;
 
-    // Fetch all sellers (case-insensitive)
+    // fetch all sellers
     const { data: sellers, error } = await client
       .from("users")
       .select("username, email, is_active, role")
@@ -273,7 +271,7 @@ window.addEventListener("click", (e) => {
   if (e.target === sellersModal) sellersModal.style.display = "none";
 });
 
-// ---------- Create User Modal ----------
+// create user
 const createUserBtn = document.getElementById("createUserBtn");
 const createUserModal = document.getElementById("createUserModal");
 const createUserForm = document.getElementById("createUserForm");
@@ -292,7 +290,7 @@ if (cancelCreateUser) {
   });
 }
 
-// Handle form submission
+// form logic for creating a user
 if (createUserForm) {
   createUserForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -307,7 +305,7 @@ if (createUserForm) {
       return;
     }
 
-    // Insert new user into Supabase
+    // insert newly made user into supabase
     const { data, error } = await client.from("users").insert([
       {
         id: crypto.randomUUID(),
@@ -319,12 +317,12 @@ if (createUserForm) {
     ]);
 
     if (error) {
-      console.error("❌ Error creating user:", error);
+      console.error("Error creating user:", error);
       alert("Failed to create user: " + error.message);
       return;
     }
 
-    console.log("✅ New user added:", data);
+    console.log("New user added:", data);
     showToast(`User ${email} created successfully as ${role}!`);
     createUserForm.reset();
     createUserModal.style.display = "none";
@@ -339,7 +337,7 @@ window.addEventListener("click", (e) => {
   if (e.target === createUserModal) createUserModal.style.display = "none";
 });
 
-// ---------- Edit User Modal ----------
+// edit user
 const editUserModal = document.getElementById("editUserModal");
 const editUserForm = document.getElementById("editUserForm");
 const cancelEditUser = document.getElementById("cancelEditUser");
@@ -350,13 +348,13 @@ const editStatus = document.getElementById("editStatus");
 
 let selectedUserEmail = null;
 
-// Open modal when clicking "Edit" in any table
+// open edit menu when "edit" is clicked
 document.body.addEventListener("click", async (e) => {
   if (e.target.classList.contains("editUserBtn")) {
     selectedUserEmail = e.target.getAttribute("data-email");
-    console.log("📝 Editing user:", selectedUserEmail);
+    console.log("Editing user:", selectedUserEmail);
 
-    // Fetch user data from Supabase
+    // get user data
     const { data: user, error } = await client
       .from("users")
       .select("username, email, role, is_active")
@@ -368,25 +366,25 @@ document.body.addEventListener("click", async (e) => {
       return;
     }
 
-    // Populate form
+    // add values to form
     editUsername.value = user.username;
     editEmail.value = user.email;
     editRole.value = user.role;
     editStatus.value = user.is_active ? "true" : "false";
 
-    // Show modal
+    // show modal
     editUserModal.style.display = "flex";
   }
 });
 
-// Close modal
+// close modal
 if (cancelEditUser) {
   cancelEditUser.addEventListener("click", () => {
     editUserModal.style.display = "none";
   });
 }
 
-// Handle save changes
+// save changes
 if (editUserForm) {
   editUserForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -400,7 +398,7 @@ if (editUserForm) {
       .eq("email", selectedUserEmail);
 
     if (error) {
-      console.error("❌ Error updating user:", error);
+      console.error("Error updating user:", error);
       alert("Failed to update user: " + error.message);
       return;
     }
@@ -417,7 +415,7 @@ window.addEventListener("click", (e) => {
   if (e.target === editUserModal) editUserModal.style.display = "none";
 });
 
-// ---------- Delete User Modal ----------
+// delete user
 const deleteUserModal = document.getElementById("deleteUserModal");
 const deleteUserText = document.getElementById("deleteUserText");
 const confirmDeleteUser = document.getElementById("confirmDeleteUser");
@@ -425,7 +423,7 @@ const cancelDeleteUser = document.getElementById("cancelDeleteUser");
 
 let selectedDeleteEmail = null;
 
-// Open confirmation modal when "Delete" is clicked
+// open confirmation modal when "Delete" is clicked
 document.body.addEventListener("click", (e) => {
   if (e.target.classList.contains("deleteUserBtn")) {
     selectedDeleteEmail = (e.target.getAttribute("data-email") || "").trim();
@@ -434,7 +432,7 @@ document.body.addEventListener("click", (e) => {
   }
 });
 
-// Cancel deletion
+// cancel deletion
 if (cancelDeleteUser) {
   cancelDeleteUser.addEventListener("click", () => {
     deleteUserModal.style.display = "none";
@@ -442,15 +440,15 @@ if (cancelDeleteUser) {
   });
 }
 
-// Confirm deletion (robust: verify rows deleted + update UI)
+// confirm deletion
 if (confirmDeleteUser) {
   confirmDeleteUser.addEventListener("click", async () => {
     if (!selectedDeleteEmail) return;
 
-    // Normalize email (just in case it was stored in a different case)
+    // normalize email (in case it's a weirdly capatailized mess)
     const emailToDelete = selectedDeleteEmail.toLowerCase();
 
-    // 1) Find the exact stored email (avoids case/whitespace mismatches)
+    // gets exact email
     const { data: matchRows, error: findErr } = await client
       .from("users")
       .select("id,email")
@@ -468,7 +466,7 @@ if (confirmDeleteUser) {
 
     const storedEmail = matchRows[0].email;
 
-    // 2) Delete and ask PostgREST to return the deleted ids so we can verify
+    // delete and ask for deleted ids
     const { data: deletedRows, error: delErr } = await client
       .from("users")
       .delete()
@@ -476,7 +474,7 @@ if (confirmDeleteUser) {
       .select("id"); // forces returning representation
 
     if (delErr) {
-      console.error("❌ Error deleting user:", delErr);
+      console.error("Error deleting user:", delErr);
       alert("Failed to delete user: " + delErr.message);
       return;
     }
@@ -486,7 +484,7 @@ if (confirmDeleteUser) {
       return;
     }
 
-    // 3) Update UI: remove any visible rows that match this email
+    // update ui so no rows from removed id is showing
     document.querySelectorAll(`.editUserBtn[data-email="${storedEmail}"]`).forEach(btn => {
       const tr = btn.closest("tr");
       if (tr) tr.remove();
@@ -505,12 +503,12 @@ if (confirmDeleteUser) {
   });
 }
 
-// Close modal if background is clicked
+// close modal if background is clicked
 window.addEventListener("click", (e) => {
   if (e.target === deleteUserModal) deleteUserModal.style.display = "none";
 });
 
-// ---------- Load All Users into Main Table ----------
+// load all users
 const usersTableBody = document.querySelector("#usersTable tbody");
 
 async function loadAllUsers() {
@@ -549,7 +547,7 @@ async function loadAllUsers() {
   });
 }
 
-// Load users automatically when the admin dashboard loads
+// load users after the page finishes loading
 document.addEventListener("DOMContentLoaded", loadAllUsers);
 
 

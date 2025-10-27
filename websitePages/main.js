@@ -100,6 +100,24 @@ async function addToCart(productId) {
       return;
     }
 
+    // Check stock before proceeding
+    const { data: product, error: prodErr } = await client
+      .from("products")
+      .select("quantity_available, name")
+      .eq("id", productId)
+      .single();
+
+    if (prodErr || !product) {
+      console.error("Error fetching product:", prodErr);
+      alert("Unable to check product stock.");
+      return;
+    }
+
+    if (product.quantity <= 0) {
+      alert(`Sorry, ${product.name} is out of stock.`);
+      return;
+    }
+
     // Get or create cart for buyer
     let { data: existingCart, error: cartError } = await client
       .from("carts")
@@ -122,7 +140,7 @@ async function addToCart(productId) {
       cartId = existingCart[0].id;
     }
 
-    // Check if product already in cart_items
+    // Add or update cart item
     const { data: existingItem, error: itemError } = await client
       .from("cart_items")
       .select("id, quantity")
@@ -133,14 +151,19 @@ async function addToCart(productId) {
     if (itemError) throw itemError;
 
     if (existingItem) {
-      // Update quantity
+      // Prevent adding more than available stock
+      const newQty = existingItem.quantity + 1;
+      if (newQty > product.quantity) {
+        alert(`Only ${product.quantity} left in stock.`);
+        return;
+      }
+
       const { error: updateError } = await client
         .from("cart_items")
-        .update({ quantity: existingItem.quantity + 1 })
+        .update({ quantity: newQty })
         .eq("id", existingItem.id);
       if (updateError) throw updateError;
     } else {
-      // Insert new cart item
       const { error: insertError } = await client
         .from("cart_items")
         .insert([{ cart_id: cartId, product_id: productId, quantity: 1 }]);
@@ -153,8 +176,6 @@ async function addToCart(productId) {
     alert("Failed to add item to cart.");
   }
 }
-
-
 // Load products on page load
 loadProducts();
 document.addEventListener("DOMContentLoaded", async () => {

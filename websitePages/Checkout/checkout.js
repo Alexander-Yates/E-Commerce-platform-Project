@@ -195,10 +195,27 @@ document.getElementById("place-order-btn").addEventListener("click", async () =>
   // Confirm mock payment
   showModal({
     title: "Confirm Payment",
-    message: `Total: $${total.toFixed(2)}. Proceed with mock payment?`,
+    message: `Total: $${total.toFixed(2)}. Proceed with payment?`,
     confirmText: "Pay Now",
     cancelText: "Cancel",
     onConfirm: async () => {
+      // Check quantity before confirming purchase
+    for (const i of items) {
+      const { data: product, error: stockErr } = await client
+        .from("products")
+        .select("name, quantity_available")
+        .eq("id", i.product_id)
+        .single();
+
+      if (stockErr || !product) {
+        alert("Could not verify stock. Please try again.");
+        return;
+      }
+      if (Number(product.quantity_available ?? 0) < Number(i.quantity ?? 0)) {
+        alert(`Sorry, "${product.name}" only has ${product.quantity_available} left.`);
+        return;
+      }
+    }
       // Simulate "processing payment"
       const processingModal = document.createElement("div");
       processingModal.style = `

@@ -182,7 +182,7 @@ document.addEventListener("click", async (e) => {
     const { error: notifError } = await client.from("notifications").insert([
       {
         user_id: product.seller_id,
-        message: 'Your product "${productName}" was not approved: ${reason}',
+        message: `Your product "${product.name}" was not approved: ${reason}`,
         type: "product_rejection",
         created_at: new Date(),
       },

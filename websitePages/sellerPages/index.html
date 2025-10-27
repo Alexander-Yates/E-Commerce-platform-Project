@@ -184,6 +184,75 @@
       margin-bottom: 1rem;
     }
 
+    /* Notification Styles */
+    .notif-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .notif-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: white;
+      transition: transform 0.2s ease;
+    }
+
+    .notif-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #ff5757;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 12px;
+      display: none;
+    }
+
+    .notif-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 30px;
+      background: white;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      border-radius: 6px;
+      padding: 8px;
+      width: 260px;
+      z-index: 10;
+    }
+
+    .notif-dropdown.show {
+      display: block;
+    }
+
+    .notif-dropdown p {
+      margin: 6px 0;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--teal);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.4s;
+      z-index: 9999;
+    }
+
     /* Modal Overlay */
     .modal-overlay {
       display: none;
@@ -454,6 +523,17 @@
   <header>
     <h1>Seller Dashboard</h1>
     <div class="right">
+
+      <!--notifcation UI-->
+      <div class="notif-container">
+        <button id="sellerNotifBtn" class="notif-btn">🔔</button>
+        <span id="sellerNotifBadge" class="notif-badge">0</span>
+        <div id="sellerNotifDropdown" class="notif-dropdown">
+          <ul id="notificationsList"></ul>
+        </div>
+      </div>
+      <!--done :) -->
+
       <span>Logged in as: <strong id="sellerName">SellerName</strong></span>
       <button id="logoutBtn">Logout</button>
     </div>

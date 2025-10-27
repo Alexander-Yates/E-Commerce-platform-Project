@@ -183,6 +183,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const logoutLink = document.getElementById("logoutLink");
   const loginLink = document.getElementById("loginLink");
   const signupLink = document.getElementById("signupLink");
+  const profileLink = document.getElementById("profileLink");
 
   // If any are missing, stop
   if (!sellLink || !logoutLink || !loginLink || !signupLink) {
@@ -195,17 +196,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   logoutLink.style.display = "none";
 
   const toggleNavState = (loggedIn) => {
-    console.log("toggleNavState -> loggedIn:", loggedIn);
-    if (loggedIn) {
-      sellLink.style.display = "inline-block";
-      logoutLink.style.display = "inline-block";
-      loginLink.style.display = "none";
-      signupLink.style.display = "none";
-    } else {
-      sellLink.style.display = "none";
-      logoutLink.style.display = "none";
-      loginLink.style.display = "inline-block";
-      signupLink.style.display = "inline-block";
+  console.log("toggleNavState -> loggedIn:", loggedIn);
+  if (loggedIn) {
+    sellLink.style.display = "inline-block";
+    logoutLink.style.display = "inline-block";
+    profileLink.style.display = "inline-block";
+    loginLink.style.display = "none";
+    signupLink.style.display = "none";
+  } else {
+    sellLink.style.display = "none";
+    logoutLink.style.display = "none";
+    profileLink.style.display = "none";
+    loginLink.style.display = "inline-block";
+    signupLink.style.display = "inline-block";
     }
   };
 

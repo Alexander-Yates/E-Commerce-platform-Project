@@ -189,7 +189,7 @@ document.addEventListener("click", async (e) => {
       {
         user_id: product.seller_id,
         message: message,
-        type: "product_rejection",
+        type: "seller_request",
         created_at: new Date(),
       },
     ]);

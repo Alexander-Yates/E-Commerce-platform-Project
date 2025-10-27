@@ -55,6 +55,16 @@ async function displaySellerName() {
 document.addEventListener("DOMContentLoaded", () => {
   displaySellerName();
   loadNotifications();
+  setInterval(loadNotifications, 30000);
+
+  const bell = document.getElementById("notificatonBell");
+  const list = document.getElementById("notificationsList");
+
+  if (bell && list) {
+    bell.addEventListener("click", () => {
+      list.style.display = list.style.display === "none" ? "block" : "none";
+    });
+  }
 });
 
 // fetch and display notif for product deletions (admin reason)

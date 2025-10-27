@@ -179,16 +179,13 @@ document.addEventListener("click", async (e) => {
       return;
     }
 
-    const { error: notifError } = await client
-      .from("notifications")
-      .insert({
-        user_id: product.seller_id,
-        type: "seller_request",
-        message: 'Your product "${product.name}" was not approved: ${reason}',
-        context_id: id,
+    const { error: notifError } = await client.from("notifications").insert([{
+        user_id: seller_id,
+        message: 'Your product "${productName}" was not approved: ${reason}',
+        type: "product_rejection",
         created_at: new Date(),
-        is_read: false
-      });
+      }
+    ]);
 
     if (notifError) {
       console.error("Error sending notification: ", notifError);

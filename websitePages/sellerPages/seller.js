@@ -403,3 +403,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const manageOrdersBtn = document.getElementById("manageOrdersBtn");
+  if (manageOrdersBtn) {
+    manageOrdersBtn.addEventListener("click", () => {
+      window.location.href = "/orderPages/orders.html";
+    });
+  }
+});

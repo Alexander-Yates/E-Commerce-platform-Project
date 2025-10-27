@@ -293,6 +293,9 @@ if (file) {
 
     // notif for new product
     addNotifcation(user.id, 'Your product "${name}" has been submitted and is pending approval.');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   }
 

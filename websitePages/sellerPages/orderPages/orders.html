@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doodle & Stick | Manage Orders</title>
+  <style>
+    :root {
+      --mustard: #d1a05a;
+      --peach: #f7a97b;
+      --teal: #4b8c8d;
+      --cream: #f5edd8;
+      --brown: #a46a42;
+      --text: #3b2f2f;
+      --shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    header {
+      background: var(--teal);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .navBtn {
+      background: var(--peach);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .navBtn:hover {
+      background: var(--mustard);
+      transform: translateY(-2px);
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      box-shadow: var(--shadow);
+      border-left: 6px solid var(--mustard);
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      color: var(--brown);
+      font-weight: 600;
+      margin-top: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #e4d5b7;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--cream);
+      color: var(--brown);
+      font-weight: 600;
+    }
+
+    .status-badge {
+      padding: 0.4rem 0.7rem;
+      border-radius: 8px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .pending { background: #e57373; }
+    .confirmed { background: var(--mustard); }
+    .shipped { background: var(--teal); }
+
+    .actionBtn {
+      background: var(--peach);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.2s ease;
+    }
+
+    .actionBtn:hover {
+      background: var(--mustard);
+      transform: translateY(-1px);
+    }
+
+    .no-orders {
+      text-align: center;
+      color: var(--brown);
+      font-weight: 500;
+      padding: 1.5rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .shipping-info {
+      background: var(--cream);
+      border-radius: 10px;
+      padding: 0.6rem 1rem;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--brown);
+      line-height: 1.4;
+    }
+
+    .shipping-info strong {
+      color: var(--teal);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    /* Modal Styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      text-align: left;
+    }
+
+    .modal-content h3 {
+      color: var(--teal);
+      margin-top: 0;
+    }
+
+    #shippingDetails p {
+      margin: 6px 0;
+      color: var(--brown);
+    }
+
+    .close {
+      float: right;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--brown);
+      transition: 0.2s ease;
+    }
+    .copyBtn {
+      margin-top: 1rem;
+      background: var(--peach);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .copyBtn:hover {
+      background: var(--mustard);
+      transform: translateY(-2px);
+    }
+
+
+    .close:hover { color: var(--teal); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Manage Orders</h1>
+    <div class="right">
+      <button class="navBtn" onclick="window.location.href='/sellerPages/index.html'">Dashboard</button>
+      <button class="navBtn" onclick="window.location.href='/websitePages/index.html'">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Incoming Orders</h2>
+        <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem;">
+          <button class="navBtn filterBtn active" data-status="all">All</button>
+          <button class="navBtn filterBtn" data-status="paid">Paid</button>
+          <button class="navBtn filterBtn" data-status="shipped">Shipped</button>
+        </div>
+      <div id="shippingModal" class="modal">
+        <div class="modal-content">
+          <span id="closeModal" class="close">&times;</span>
+          <h3>Shipping Address</h3>
+          <div id="shippingDetails"></div>
+          <button id="copyAddressBtn" class="copyBtn">Copy Address</button>
+        </div>
+      </div>
+
+
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Buyer</th>
+            <th>Products</th>
+            <th>Shipping Info</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody">
+          <tr><td colspan="6" class="no-orders">Loading orders...</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module" src="orders.js"></script>
+</body>
+</html>

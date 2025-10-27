@@ -90,7 +90,7 @@ async function loadCart() {
   // gets product info from each product in cart, set removes duplicate id #'s
   const { data: products } = await client
     .from("products")
-    .select("id, name, price, image_url")
+    .select("id, name, price, image_url, quantity_available")
     .in("id", productIds);
 
   const pmap = new Map(products.map(p => [p.id, p])); // convert array into map
@@ -156,14 +156,29 @@ async function loadCart() {
 
     // increase quantity
     plusBtn.addEventListener("click", async () => {
-      const newQty = item.quantity + 1;
-      await client.from("cart_items").update({ quantity: newQty }).eq("id", item.id);
-      item.quantity = newQty;
-      qtySpan.textContent = newQty;
-      tr.querySelector(".row-subtotal").textContent = fmt(price * newQty);
-      recalcTotals();
-    });
+    const stock = Number(p.quantity_available ?? 0);
+    const proposed = item.quantity + 1;
 
+    if (proposed > stock) {
+      showModal({
+        title: "Not Enough Stock",
+        message: `Only ${stock} left for "${p.name}".`,
+        confirmText: "OK",
+        cancelText: "Close",
+        onConfirm: () => {}
+      });
+      return;
+    }
+
+    await client.from("cart_items").update({ quantity: proposed }).eq("id", item.id);
+    item.quantity = proposed;
+    qtySpan.textContent = proposed;
+    tr.querySelector(".row-subtotal").textContent = fmt(price * proposed);
+    recalcTotals();
+
+    // disable + if we’re at stock
+    plusBtn.disabled = (qty >= Number(p.quantity_available ?? 0));
+  });
     tbody.appendChild(tr);
   }
   // updates subtotal and total on load

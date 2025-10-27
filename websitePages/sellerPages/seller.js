@@ -69,7 +69,6 @@ async function loadNotifications() {
     .from("notifications")
     .select("*")
     .eq("user_id", user.id)
-    .eq("type", "product_rejection")
     .order("created_at", { ascending: false});
 
   if (error) {
@@ -78,15 +77,21 @@ async function loadNotifications() {
   }
 
   const list = document.getElementById("notificationsList");
-  if (!list) return;
+  const badge = document.getElementById("notificationCount");
+  if (!list || !badge) return;
   list.innerHTML = "";
 
   if (!notifications.length) {
     list.innerHTML = "<li>No notifications yet.</li>";
+    badge.textContent = "0";
+    badge.style.display = "none";
     return;
   }
 
-  notifications.forEach(n => {
+  badge.textContent = notifications.length;
+  badge.style.display = "inline";
+
+  notifications.forEach((n) => {
     const li = document.createElement("li");
     li.textContent = '${new Date(n.created_at).toLocaleString()}: ${n.message}';
     list.appendChild(li);

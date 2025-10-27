@@ -183,7 +183,7 @@ document.addEventListener("click", async (e) => {
 
     const message = `Your product "${product.name}" was not approved: ${reason}`;
 
-    console.log("Notification message:", message);
+    console.log("DEBUG - Notification message:", message);
 
     const { error: notifError } = await client.from("notifications").insert([
       {

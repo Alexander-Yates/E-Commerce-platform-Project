@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doodle & Stick | Buyer Profile</title>
+  <style>
+    :root {
+      --mustard: #d1a05a;
+      --peach: #f7a97b;
+      --teal: #4b8c8d;
+      --cream: #f5edd8;
+      --brown: #a46a42;
+      --text: #3b2f2f;
+      --shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins','Segoe UI',sans-serif;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--teal); color: white; padding: 1rem 2rem;
+      box-shadow: var(--shadow); z-index: 1000;
+    }
+    .logo { font-weight: 700; font-size: 1.4rem; }
+    .nav-links a {
+      color: white; text-decoration: none; margin-left: 1rem;
+      background: var(--peach); padding: 0.5rem 1rem;
+      border-radius: 8px; font-weight: 500;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .nav-links a:hover { background: var(--mustard); transform: translateY(-2px); }
+
+    /* Profile container */
+    .profile-container {
+      margin: 120px auto 60px;
+      max-width: 900px;
+      background: white;
+      padding: 2rem 2.5rem;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+    .profile-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .profile-header h2 {
+      color: var(--brown);
+      margin-bottom: 0.5rem;
+    }
+    .profile-header p { color: var(--teal); }
+
+    /* Info section */
+    .profile-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .info-card {
+      background: var(--cream);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    .info-card h4 { color: var(--brown); margin-bottom: 0.5rem; }
+
+    /* Orders */
+    .orders-section h3 { color: var(--brown); margin-bottom: 1rem; }
+    .order {
+      background: var(--cream);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .order p { margin: 0.3rem 0; }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background: var(--teal);
+      color: white;
+      margin-top: 3rem;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">Doodle & Stick</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="cart.html">Cart</a>
+      <a href="#" id="logoutBtn" style="background:#a46a42;">Logout</a>
+    </div>
+  </div>
+
+  <!-- Profile Content -->
+  <div class="profile-container">
+    <div class="profile-header">
+      <h2 id="buyerName">Loading...</h2>
+      <p id="buyerEmail"></p>
+    </div>
+
+    <div class="profile-info">
+      <div class="info-card">
+        <h4>Member Since</h4>
+        <p id="joinDate">—</p>
+      </div>
+      <div class="info-card">
+        <h4>Orders Placed</h4>
+        <p id="orderCount">—</p>
+      </div>
+    </div>
+
+    <div class="orders-section">
+      <h3>All Orders</h3>
+      <div id="ordersList">
+        <p>Loading your orders...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2025 Doodle & Stick — Stickers that make you smile.</footer>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="buyerprofile.js"></script>
+</body>
+</html>

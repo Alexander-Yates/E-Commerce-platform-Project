@@ -286,20 +286,10 @@ if (file) {
       return;
     }
 
-<<<<<<< Updated upstream
-    alert(" Product added successfully!");
-=======
     alert("✅ Product added successfully!");
 
     // notif for new product
     addNotifcation(user.id, 'Your product "${name}" has been submitted and is pending approval.');
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   }
 
   addProductModal.style.display = "none";

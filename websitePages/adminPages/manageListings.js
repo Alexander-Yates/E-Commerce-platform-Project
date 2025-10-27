@@ -162,7 +162,7 @@ document.addEventListener("click", async (e) => {
     const id = e.target.getAttribute("data-id");
     const reason = prompt("Enter a reason why this product was not approved: ");
 
-    if (reason === null || reason.trim() === ""){
+    if (reason === null || reason.trim() === "") {
       alert("Deletion cancelled. Reason is required.");
       return;
     }
@@ -179,12 +179,13 @@ document.addEventListener("click", async (e) => {
       return;
     }
 
-    const { error: notifError } = await client.from("notifications").insert([{
-        user_id: seller_id,
+    const { error: notifError } = await client.from("notifications").insert([
+      {
+        user_id: product.seller_id,
         message: 'Your product "${productName}" was not approved: ${reason}',
         type: "product_rejection",
         created_at: new Date(),
-      }
+      },
     ]);
 
     if (notifError) {

@@ -158,62 +158,65 @@ document.addEventListener("click", async (e) => {
   }
 
   //delete handler
-  if (e.target.classList.contains("delete-unapproved-btn")) {
-    const id = e.target.getAttribute("data-id");
-    const reason = prompt("Enter a reason why this product was not approved: ");
+ if (e.target.classList.contains("delete-unapproved-btn")) {
+  const id = e.target.getAttribute("data-id");
 
-    if (reason === null || reason.trim() === "") {
-      alert("Deletion cancelled. Reason is required.");
-      return;
-    }
+  // 1. Fetch product info
+  const { data: product, error: fetchError } = await client
+    .from("products")
+    .select("seller_id, name")
+    .eq("id", id)
+    .single();
 
-    const {data: product, error: fetchError } = await client
-      .from("products")
-      .select("seller_id, name")
-      .eq("id",id)
-      .single();
+  if (fetchError || !product) {
+    alert("Could not find product to delete.");
+    console.error(fetchError);
+    return;
+  }
 
-    if (fetchError || !product) {
-      alert("Could not find product to delete.");
-      console.error(fetchError);
-      return;
-    }
+  // 2. Prompt admin for reason
+  const reason = prompt("Enter a reason why this product was not approved:");
+  if (!reason || reason.trim() === "") {
+    alert("Deletion cancelled. Reason is required.");
+    return;
+  }
 
-    if (!reason || reason.trim() == "") return;
+  // 3. Build notification message
+  const message = `Your product "${product.name}" was not approved: ${reason}`;
+  console.log("DEBUG: message to insert:", message);
 
-    const message = `Your product "${product.name}" was not approved: ${reason}`;
-
-    console.log("DEBUG - Notification message:", message);
-
-    const { error: notifError } = await client.from("notifications").insert([
+  // 4. Insert notification
+  const { error: notifError } = await client
+    .from("notifications")
+    .insert([
       {
         user_id: product.seller_id,
         message: message,
-        type: "seller_request",
+        type: "product_rejection",
         created_at: new Date(),
       },
     ]);
 
-    if (notifError) {
-      console.error("Error sending notification: ", notifError);
-    } else {
-      console.log("Notification inserted successfully!");
-    }
-
-    const { error:deleteError } = await client
-      .from("products")
-      .delete()
-      .eq("id", id);
-
-    if (deleteError) {
-      alert("Error deleting product: " + deleteError.message);
-      console.error(deleteError);
-      return;
-    }
-
-    alert("Product deleted and seller notified!");
-    loadProducts();
+  if (notifError) {
+    console.error("Error inserting notification:", notifError);
+    alert("Failed to send notification to seller.");
   }
+
+  // 5. Delete the product
+  const { error: deleteError } = await client
+    .from("products")
+    .delete()
+    .eq("id", id);
+
+  if (deleteError) {
+    alert("Error deleting product: " + deleteError.message);
+    console.error(deleteError);
+    return;
+  }
+
+  alert("Product deleted and seller notified!");
+  loadProducts();
+}
 });
 
 // ---------- Seller Modal Logic ----------

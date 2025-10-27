@@ -179,10 +179,16 @@ document.addEventListener("click", async (e) => {
       return;
     }
 
+    if (!reason || reason.trim() == "") return;
+
+    const message = `Your product "${product.name}" was not approved: ${reason}`;
+
+    console.log("Notification message:", message);
+
     const { error: notifError } = await client.from("notifications").insert([
       {
         user_id: product.seller_id,
-        message: `Your product "${product.name}" was not approved: ${reason}`,
+        message: message,
         type: "product_rejection",
         created_at: new Date(),
       },
@@ -190,6 +196,8 @@ document.addEventListener("click", async (e) => {
 
     if (notifError) {
       console.error("Error sending notification: ", notifError);
+    } else {
+      console.log("Notification inserted successfully!");
     }
 
     const { error:deleteError } = await client

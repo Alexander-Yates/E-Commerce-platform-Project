@@ -52,7 +52,58 @@ async function displaySellerName() {
 }
 
 // Run once page loads
-document.addEventListener("DOMContentLoaded", displaySellerName);
+document.addEventListener("DOMContentLoaded", () => {
+  displaySellerName();
+  loadNotifications();
+});
+
+// fetch and display notif for product deletions (admin reason)
+async function loadNotifications() {
+  const { data: { user }, error: userError } = await client.auth.getUser();
+  if (userError || !user) {
+    console.error("User not logged in:", userError);
+    return;
+  }
+  
+  const { data: notifications, error } = await client
+    .from("notifications")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("type", "product_rejection")
+    .order("created_at", { ascending: false});
+
+  if (error) {
+    console.error("Error loading notifications:", error);
+    return;
+  }
+
+  const list = document.getElementById("notificationsList");
+  if (!list) return;
+  list.innerHTML = "";
+
+  if (!notifications.length) {
+    list.innerHTML = "<li>No notifications yet.</li>";
+    return;
+  }
+
+  notifications.forEach(n => {
+    const li = document.createElement("li");
+    li.textContent = '${new Date(n.created_at).toLocaleString()}: ${n.message}';
+    list.appendChild(li);
+  });
+}
+
+async function addNotifcation(userId, message) {
+  const { error } = await client.from("notifications").insert([
+    {
+      user_id: userId,
+      message: message,
+      type: "general",
+      created_at: new Date(),
+    },
+  ]);
+  if (error) console.error("Failed to add notification:", error);
+}
 
 // --- Fetch and Display Seller Products ---
 async function loadProducts() {
@@ -235,12 +286,16 @@ if (file) {
       return;
     }
 
-    alert(" Product added successfully!");
+    alert("✅ Product added successfully!");
+
+    // notif for new product
+    addNotifcation(user.id, 'Your product "${name}" has been submitted and is pending approval.');
   }
 
   addProductModal.style.display = "none";
   addProductForm.reset();
   loadProducts();
+  loadNotifications();
 });
 
 closeModal.addEventListener("click", () => {
@@ -263,7 +318,29 @@ productTableBody.addEventListener("click", async (e) => {
       alert("Error deleting product: " + error.message);
     } else {
       alert("Product deleted successfully.");
+
+      // notif for deleted product
+      if (deletedProduct && deletedProduct[0]){
+        const { data: notif, error: notifError } = await client
+          .from("notifications")
+          .select("message")
+          .eq("user_id", deletedProduct[0].seller_id)
+          .eq("type", "product_rejection")
+          .eq("product_id", deletedProduct[0].id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single();
+
+        let message = 'Your product "${deletedProduct[0].name}" was deleted.';
+        if (notif && notif.message) {
+          message += ' Reason: ${notif.message}';
+        }
+
+        addNotification(deletedProduct[0].seller_id,message);
+      }
+
       loadProducts();
+      loadNotifications();
     }
   }
 });

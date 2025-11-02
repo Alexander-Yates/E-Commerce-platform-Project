@@ -15,6 +15,12 @@ const addProductModal = document.getElementById("addProductModal");
 const closeModal = document.getElementById("closeModal");
 const addProductForm = document.getElementById("addProductForm");
 const productTableBody = document.getElementById("productTableBody");
+// --- Notification DOM Elements ---
+const bell = document.getElementById("sellerNotifBtn");
+const badge = document.getElementById("sellerNotifBadge");
+const dropdown = document.getElementById("sellerNotifDropdown");
+const list = document.getElementById("notificationsList");
+
 
 // --- Modal Controls ---
 addProductBtn.addEventListener("click", () => {
@@ -57,55 +63,79 @@ document.addEventListener("DOMContentLoaded", () => {
   loadNotifications();
   setInterval(loadNotifications, 30000);
 
-  const bell = document.getElementById("notificatonBell");
-  const list = document.getElementById("notificationsList");
+  if (bell && dropdown) {
+  bell.addEventListener("click", async () => {
+    dropdown.classList.toggle("show");
 
-  if (bell && list) {
-    bell.addEventListener("click", () => {
-      list.style.display = list.style.display === "none" ? "block" : "none";
-    });
-  }
+    if (dropdown.classList.contains("show")) {
+      // hide badge immediately
+      badge.style.display = "none";
+
+      // get current user
+      const { data: { user }, error: userError } = await client.auth.getUser();
+      if (userError || !user) return;
+
+      // mark unread as read
+      const { error } = await client
+        .from("notifications")
+        .update({ is_read: true })
+        .eq("user_id", user.id)
+        .eq("is_read", false);
+
+      if (error) console.error("Failed to mark notifications as read:", error);
+    }
+  });
+}
+
 });
 
 // fetch and display notif for product deletions (admin reason)
 async function loadNotifications() {
   const { data: { user }, error: userError } = await client.auth.getUser();
-  if (userError || !user) {
-    console.error("User not logged in:", userError);
-    return;
-  }
-  
+  if (userError || !user) return;
+
   const { data: notifications, error } = await client
     .from("notifications")
     .select("*")
     .eq("user_id", user.id)
-    .order("created_at", { ascending: false});
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error loading notifications:", error);
     return;
   }
 
-  const list = document.getElementById("notificationsList");
-  const badge = document.getElementById("notificationCount");
-  if (!list || !badge) return;
   list.innerHTML = "";
 
-  if (!notifications.length) {
+  if (!notifications || notifications.length === 0) {
     list.innerHTML = "<li>No notifications yet.</li>";
-    badge.textContent = "0";
     badge.style.display = "none";
     return;
   }
 
-  badge.textContent = notifications.length;
-  badge.style.display = "inline";
+  // count unread notifications
+  const unreadCount = notifications.filter(n => !n.is_read).length;
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount;
+    badge.style.display = "block";
+  } else {
+    badge.style.display = "none";
+  }
 
   notifications.forEach((n) => {
-    const li = document.createElement("li");
-    li.textContent = '${new Date(n.created_at).toLocaleString()}: ${n.message}';
-    list.appendChild(li);
-  });
+  const li = document.createElement("li");
+  li.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span>${n.message}</span>
+      <button class="ack-btn" data-id="${n.id}" 
+        style="margin-left:10px; background:var(--teal); color:white; border:none; border-radius:6px; padding:4px 8px; cursor:pointer; font-size:0.8rem;">
+        Okay
+      </button>
+    </div>
+  `;
+  list.appendChild(li);
+});
+
 }
 
 async function addNotifcation(userId, message) {
@@ -319,6 +349,41 @@ closeModal.addEventListener("click", () => {
   document.getElementById("modalTitle").textContent = "Add New Product";
   document.getElementById("saveProductBtn").textContent = "Save Product";
 });
+// notification listeners
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".notif-container")) {
+    dropdown.classList.remove("show");
+  }
+});
+// --- Handle "Okay" / "I understand" buttons ---
+list.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("ack-btn")) {
+    const notifId = e.target.dataset.id;
+    if (!notifId) return;
+
+    // remove it visually
+    e.target.closest("li").remove();
+
+    // delete from Supabase
+    const { error } = await client
+      .from("notifications")
+      .delete()
+      .eq("id", notifId);
+
+    if (error) {
+      console.error("Failed to delete notification:", error);
+      alert("Couldn't dismiss notification. Try again.");
+    } else {
+      console.log("Notification dismissed:", notifId);
+    }
+
+    // if no more notifications left, show fallback message
+    if (list.children.length === 0) {
+      list.innerHTML = "<li>No notifications yet.</li>";
+    }
+  }
+});
+
 
 // --- Delete Product ---
 productTableBody.addEventListener("click", async (e) => {

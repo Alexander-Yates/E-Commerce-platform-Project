@@ -532,6 +532,22 @@
       background: var(--mustard);
       transform: translateY(-2px);
     }
+    .notif-dropdown ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .notif-dropdown li {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .notif-dropdown li:last-child {
+      border-bottom: none;
+    }
 
   </style>
 </head>
@@ -543,10 +559,11 @@
 
       <!--notifcation UI-->
       <div class="notif-container">
-        <button id="sellerNotifBtn" class="notif-btn">🔔</button>
-        <span id="sellerNotifBadge" class="notif-badge">0</span>
+        <button id="sellerNotifBtn" class="notif-btn">🔔
+          <span id="sellerNotifBadge" class="notif-badge">0</span>
+        </button>
         <div id="sellerNotifDropdown" class="notif-dropdown">
-          <ul id="notificationsList"></ul>
+          <ul id="notificationsList" class="notification-dropdown"></ul>
         </div>
       </div>
       <!--done :) -->

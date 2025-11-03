@@ -14,6 +14,9 @@ const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   },
 });
 
+let currentPage = 1;
+const productsPerPage = 20;
+
 // Tracks scroll direction to hide or show the navbar
 let lastScrollY = window.scrollY;
 const navbar = document.getElementById("navbar");
@@ -28,21 +31,25 @@ window.addEventListener("scroll", () => {
 });
 
 // Loads products from the database and displays them on the page
-async function loadProducts(searchTerm = "") {
+async function loadProducts(searchTerm = "", page = 1) {
+  currentPage = page;
+
+  const start = (page - 1) * productsPerPage;
+  const end = start + productsPerPage - 1;
+
   let query = client
     .from("products")
-    .select("*, categories(name)")
+    .select("*, categories(name)", { count: "exact" })
     .eq("is_active", true)
     .eq("is_approved", true)
     .order("created_at", { ascending: false })
-    .limit(20);
+    .range(start, end);
 
-  // Filters products if a search term is entered
   if (searchTerm) {
     query = query.ilike("name", `%${searchTerm}%`);
   }
 
-  const { data: products, error } = await query;
+  const { data: products, count, error } = await query;
 
   if (error) {
     console.error("Error fetching products:", error);
@@ -52,18 +59,16 @@ async function loadProducts(searchTerm = "") {
   const productsGrid = document.getElementById("productsGrid");
   productsGrid.innerHTML = "";
 
-  // Displays message when no products match the search
-  if (products.length === 0) {
+  if (!products || products.length === 0) {
     productsGrid.innerHTML = "<p style='text-align:center;'>No products found.</p>";
     return;
   }
 
-  // Creates product cards and adds "Add to Cart" buttons
   products.forEach(product => {
     const productDiv = document.createElement("div");
-    productDiv.className = "product"; // change the innerHTML before prod
+    productDiv.className = "product";
     productDiv.innerHTML = `
-       <a href="/product.html?id=${product.id}">
+      <a href="/product.html?id=${product.id}">
         <img src="${product.image_url || 'https://placehold.co/300x200'}" alt="${product.name}">
       </a>
       <div class="product-info">
@@ -77,19 +82,71 @@ async function loadProducts(searchTerm = "") {
     const addBtn = productDiv.querySelector(".add-btn");
     addBtn.addEventListener("click", () => addToCart(product.id));
   });
+
+  createPagination(count);
+}
+
+function createPagination(total) {
+  const totalPages = Math.ceil(total / productsPerPage);
+
+  // Remove existing pagination if re-rendering
+  const existing = document.querySelector(".pagination");
+  if (existing) existing.remove();
+
+  const pagination = document.createElement("div");
+  pagination.className = "pagination";
+  pagination.style.textAlign = "center";
+  pagination.style.marginTop = "20px";
+
+  // Previous Button
+  if (currentPage > 1) {
+    const prevBtn = document.createElement("span");
+    prevBtn.textContent = "Previous";
+    prevBtn.style.marginRight = "15px";
+    prevBtn.style.cursor = "pointer";
+    prevBtn.style.color = "#4b8c8d";
+    prevBtn.onclick = () => loadProducts(searchInput.value.trim(), currentPage - 1);
+    pagination.appendChild(prevBtn);
+  }
+
+  // Page Numbers
+  for (let i = 1; i <= totalPages; i++) {
+    const pageBtn = document.createElement("span");
+    pageBtn.textContent = i;
+    pageBtn.style.margin = "0 8px";
+    pageBtn.style.cursor = "pointer";
+    pageBtn.style.color = i === currentPage ? "#a46a42" : "#4b8c8d";
+    pageBtn.style.fontWeight = i === currentPage ? "bold" : "normal";
+    pageBtn.onclick = () => loadProducts(searchInput.value.trim(), i);
+    pagination.appendChild(pageBtn);
+  }
+
+  // Next Button
+  if (currentPage < totalPages) {
+    const nextBtn = document.createElement("span");
+    nextBtn.textContent = "Next";
+    nextBtn.style.marginLeft = "15px";
+    nextBtn.style.cursor = "pointer";
+    nextBtn.style.color = "#4b8c8d";
+    nextBtn.onclick = () => loadProducts(searchInput.value.trim(), currentPage + 1);
+    pagination.appendChild(nextBtn);
+  }
+
+  // Insert below products grid
+  document.getElementById("productsGrid").insertAdjacentElement("afterend", pagination);
 }
 
 // Runs search when search button is pressed
 searchBtn.addEventListener("click", () => {
   const term = searchInput.value.trim();
-  loadProducts(term);
+  loadProducts(term, 1);
 });
 
 // Runs search on Enter key
 searchInput.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
     const term = searchInput.value.trim();
-    loadProducts(term);
+    loadProducts(term, 1);
   }
 });
 

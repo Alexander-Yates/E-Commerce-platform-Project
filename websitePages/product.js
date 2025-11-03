@@ -119,5 +119,57 @@ async function addToCart(productId) {
   }
 }
 
+async function loadRelatedProducts(productName, currentProductId) {
+  const { data: related, error } = await client
+    .from("products")
+    .select("id, name, price, image_url")
+    .filter("id", "neq", currentProductId) // do not include the same product
+    .limit(12); // temporary broad fetch
+
+  if (error) {
+    console.error("Error loading related products:", error);
+    return;
+  }
+
+  // Compute similarity score manually (fallback if pg_trgm not available)
+  function similarity(a, b) {
+    a = a.toLowerCase().split(" ");
+    b = b.toLowerCase().split(" ");
+
+    return a.filter(word => b.includes(word)).length;
+  }
+
+  // Sort by best name similarity
+  const sorted = related
+    .map(r => ({ ...r, score: similarity(productName, r.name) }))
+    .filter(r => r.score > 0)       // only keep those with matching keywords
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4); // top 4 matches
+
+  const container = document.getElementById("relatedProducts");
+  container.innerHTML = "";
+
+  if (sorted.length === 0) {
+    container.innerHTML = `<p style="text-align:center; color:#555;">No similar products found.</p>`;
+    return;
+  }
+
+  sorted.forEach(item => {
+    const div = document.createElement("div");
+    div.classList.add("product-card");
+    div.innerHTML = `
+      <a href="product.html?id=${item.id}">
+        <img src="${item.image_url || 'https://placehold.co/300x200'}" alt="${item.name}">
+      </a>
+      <div style="padding: 0.75rem;">
+        <h4>${item.name}</h4>
+        <p>$${parseFloat(item.price).toFixed(2)}</p>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
 // Loads product information when the page is opened
 loadProduct();
+loadRelatedProducts(product.name, product.id);

@@ -125,8 +125,10 @@ async function loadRelatedProducts(productName, currentProductId) {
   const { data: related, error } = await client
     .from("products")
     .select("id, name, price, image_url")
+    .eq("is_active", true)
+    .eq("is_approved", true)
     .filter("id", "neq", currentProductId) // do not include the same product
-    .limit(12); // temporary broad fetch
+    .limit(200); // temporary broad fetch
 
   if (error) {
     console.error("Error loading related products:", error);

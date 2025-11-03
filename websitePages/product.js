@@ -54,6 +54,8 @@ async function loadProduct() {
 
   // Handles the Add to Cart button click
   document.getElementById("addToCartBtn").addEventListener("click", () => addToCart(product.id));
+
+  loadRelatedProducts(product.name, product.id);
 }
 
 // Adds the selected product to the user's cart
@@ -172,4 +174,3 @@ async function loadRelatedProducts(productName, currentProductId) {
 
 // Loads product information when the page is opened
 loadProduct();
-loadRelatedProducts(product.name, product.id);

@@ -1,4 +1,4 @@
-// buyerprofile.js
+// Initializes Supabase client for authentication and database use
 const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
 
@@ -7,6 +7,7 @@ const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Gets references to UI elements
   const nameEl = document.getElementById("buyerName");
   const emailEl = document.getElementById("buyerEmail");
   const joinDateEl = document.getElementById("joinDate");
@@ -14,31 +15,31 @@ document.addEventListener("DOMContentLoaded", async () => {
   const ordersList = document.getElementById("ordersList");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  // ✅ 1. Try restoring an existing session
+  // Attempt to restore the current logged-in session
   const { data: { session }, error: sessionError } = await client.auth.getSession();
   if (sessionError) console.warn("Session check error:", sessionError);
 
   let user = session?.user || null;
 
-  // ✅ 2. If no session, check again (sometimes needed on fast reloads)
+  // If session is not ready yet, attempt retrieving user again
   if (!user) {
     const { data: userData, error: userError } = await client.auth.getUser();
     if (!userError) user = userData.user;
   }
 
-  // ✅ 3. If still no user, redirect to login
+  // Redirect to login page if no authenticated user is found
   if (!user) {
     alert("Please log in to view your profile.");
     window.location.href = "login.html";
     return;
   }
 
-  // ✅ 4. Populate profile info
+  // Display user account information
   nameEl.textContent = user.user_metadata?.name || "Buyer";
   emailEl.textContent = user.email;
   joinDateEl.textContent = new Date(user.created_at).toLocaleDateString();
 
-  // ✅ 5. Fetch all orders for this buyer
+  // Fetch all orders linked to the current user
   const { data: orders, error: ordersError } = await client
     .from("orders")
     .select("id, status, created_at, confirmed_at, shipped_at, full_name, city, state")
@@ -51,6 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  // Show message if user has no past orders
   if (!orders || orders.length === 0) {
     ordersList.innerHTML = `<p>You haven’t placed any orders yet.</p>`;
   } else {
@@ -66,6 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         ? new Date(order.shipped_at).toLocaleDateString()
         : "—";
 
+      // Display order details and refund button
       div.innerHTML = `
         <p><strong>Order #${order.id}</strong></p>
         <p>Status: <strong>${order.status || "Pending"}</strong></p>
@@ -74,14 +77,40 @@ document.addEventListener("DOMContentLoaded", async () => {
         <p>Shipped: ${shipped}</p>
         <p>Recipient: ${order.full_name || "—"}</p>
         <p>Location: ${order.city || ""}${order.state ? ", " + order.state : ""}</p>
+        <br>
+        <button class="refund-btn" data-id="${order.id}" ${order.status === "refund_requested" ? "disabled" : ""}>
+          ${order.status === "refund_requested" ? "Refund Requested" : "Request Refund"}
+        </button>
       `;
       ordersList.appendChild(div);
     });
   }
 
+  // Display the total number of orders
   orderCountEl.textContent = orders ? orders.length : 0;
 
-  // ✅ 6. Handle logout
+  // Update order status to refund_requested when refund button is clicked
+  document.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("refund-btn")) {
+      const orderId = e.target.getAttribute("data-id");
+
+      const { error } = await client
+        .from("orders")
+        .update({ status: "refund_requested" })
+        .eq("id", orderId);
+
+      if (error) {
+        alert("Failed to request refund.");
+        console.error(error);
+      } else {
+        alert("Refund request submitted.");
+        e.target.textContent = "Refund Requested";
+        e.target.disabled = true;
+      }
+    }
+  });
+
+  // Sign the user out when the logout button is clicked
   logoutBtn.addEventListener("click", async () => {
     await client.auth.signOut();
     alert("You’ve been logged out!");

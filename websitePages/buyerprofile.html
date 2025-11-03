@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Doodle & Stick | Buyer Profile</title>
+  
   <style>
+    /* Color theme and shared styles */
     :root {
       --mustard: #d1a05a;
       --peach: #f7a97b;
@@ -21,23 +23,27 @@
       color: var(--text);
     }
 
-    /* Navbar */
+    /* Navigation bar at top */
     .navbar {
       position: fixed; top: 0; left: 0; right: 0;
       display: flex; justify-content: space-between; align-items: center;
       background: var(--teal); color: white; padding: 1rem 2rem;
       box-shadow: var(--shadow); z-index: 1000;
     }
+    
     .logo { font-weight: 700; font-size: 1.4rem; }
+    
+    /* Navigation buttons */
     .nav-links a {
       color: white; text-decoration: none; margin-left: 1rem;
       background: var(--peach); padding: 0.5rem 1rem;
       border-radius: 8px; font-weight: 500;
       transition: background 0.3s ease, transform 0.2s ease;
     }
+    
     .nav-links a:hover { background: var(--mustard); transform: translateY(-2px); }
 
-    /* Profile container */
+    /* Profile content layout */
     .profile-container {
       margin: 120px auto 60px;
       max-width: 900px;
@@ -46,32 +52,38 @@
       border-radius: 20px;
       box-shadow: var(--shadow);
     }
+
+    /* Header showing user info */
     .profile-header {
       text-align: center;
       margin-bottom: 2rem;
     }
+    
     .profile-header h2 {
       color: var(--brown);
       margin-bottom: 0.5rem;
     }
+    
     .profile-header p { color: var(--teal); }
 
-    /* Info section */
+    /* Two small profile summary cards */
     .profile-info {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
       margin-bottom: 2rem;
     }
+    
     .info-card {
       background: var(--cream);
       border-radius: 12px;
       padding: 1rem 1.5rem;
       box-shadow: var(--shadow);
     }
+    
     .info-card h4 { color: var(--brown); margin-bottom: 0.5rem; }
 
-    /* Orders */
+    /* Orders list styling */
     .orders-section h3 { color: var(--brown); margin-bottom: 1rem; }
     .order {
       background: var(--cream);
@@ -80,8 +92,10 @@
       margin-bottom: 1rem;
       box-shadow: var(--shadow);
     }
+    
     .order p { margin: 0.3rem 0; }
 
+    /* Page footer */
     footer {
       text-align: center;
       padding: 1.5rem;
@@ -90,10 +104,32 @@
       margin-top: 3rem;
       font-size: 0.95rem;
     }
+
+    /* Refund request button styles */
+    .refund-btn {
+      background: var(--mustard);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s ease;
+    }
+
+    .refund-btn:hover {
+      background: var(--peach);
+    }
+
+    .refund-btn:disabled {
+      background: #bbb;
+      cursor: not-allowed;
+    }
   </style>
 </head>
+
 <body>
-  <!-- Navbar -->
+  <!-- Top navigation bar -->
   <div class="navbar">
     <div class="logo">Doodle & Stick</div>
     <div class="nav-links">
@@ -103,13 +139,16 @@
     </div>
   </div>
 
-  <!-- Profile Content -->
+  <!-- Main profile content block -->
   <div class="profile-container">
+
+    <!-- Displays the user's name and email -->
     <div class="profile-header">
       <h2 id="buyerName">Loading...</h2>
       <p id="buyerEmail"></p>
     </div>
 
+    <!-- Displays member date + order count -->
     <div class="profile-info">
       <div class="info-card">
         <h4>Member Since</h4>
@@ -121,6 +160,7 @@
       </div>
     </div>
 
+    <!-- Lists all orders for the logged-in buyer -->
     <div class="orders-section">
       <h3>All Orders</h3>
       <div id="ordersList">
@@ -129,8 +169,10 @@
     </div>
   </div>
 
-  <footer>© 2025 Doodle & Stick — Stickers that make you smile.</footer>
+  <!-- Footer branding -->
+  <footer>🄯 2025 Doodle & Stick — Stickers that make you smile.</footer>
 
+  <!-- Supabase + page logic -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="buyerprofile.js"></script>
 </body>

@@ -547,8 +547,89 @@ async function loadAllUsers() {
   });
 }
 
+async function loadRecentTransactions() {
+  const table = document.querySelector("#transactionsTable tbody");
+  if (!table) return console.error(" Could not find #transactionsTable tbody in DOM.");
+
+  table.innerHTML = `<tr><td colspan="5">Loading recent transactions...</td></tr>`;
+
+  try {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30)).toISOString();
+
+    console.log("Fetching transactions since:", thirtyDaysAgo);
+
+    const { data: transactions, error } = await client
+  .from("transactions")
+  .select(`
+    id,
+    amount,
+    payment_status,
+    created_at,
+    seller_id,
+    orders!left(
+      id,
+      buyer_id,
+      full_name,
+      status
+    ),
+    seller:users!transactions_seller_id_fkey(
+      username,
+      email
+    )
+  `)
+  .gte("created_at", thirtyDaysAgo)
+  .order("created_at", { ascending: false });
+
+
+    console.log("Query result:", transactions, "Error:", error);
+
+    if (error) {
+      table.innerHTML = `<tr><td colspan="5">Error loading transactions: ${error.message}</td></tr>`;
+      return;
+    }
+
+    if (!transactions || transactions.length === 0) {
+      table.innerHTML = `<tr><td colspan="5">No transactions found in the last 30 days.</td></tr>`;
+      return;
+    }
+
+    table.innerHTML = "";
+
+    transactions.forEach((tx) => {
+      const orderId = tx.orders?.id?.slice(0, 8) || "—";
+      const buyer =
+        tx.orders?.full_name ||
+        tx.orders?.buyer_id?.slice(0, 8) ||
+        "Unknown Buyer";
+      const seller = tx.seller?.username || tx.seller?.email || tx.seller_id?.slice(0, 8) || "Unknown Seller";
+      const total = `$${Number(tx.amount || 0).toFixed(2)}`;
+      const status = tx.payment_status || "—";
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${orderId}</td>
+        <td>${buyer}</td>
+        <td>${seller}</td>
+        <td>${total}</td>
+        <td>${status}</td>
+      `;
+      table.appendChild(row);
+    });
+  } catch (err) {
+    console.error("Unexpected error loading transactions:", err);
+    table.innerHTML = `<tr><td colspan="5">Failed to load transactions.</td></tr>`;
+  }
+}
+
+
+
 // load users after the page finishes loading
-document.addEventListener("DOMContentLoaded", loadAllUsers);
+document.addEventListener("DOMContentLoaded", () => {
+  loadAllUsers();
+  loadOverviewStats();
+  loadRecentTransactions();
+});
 
 
 

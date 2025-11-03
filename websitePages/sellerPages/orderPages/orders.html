@@ -211,6 +211,10 @@
 
 
     .close:hover { color: var(--teal); }
+
+    .refunded { background: #b0b0b0; color: white; }
+    .requested { background: #f7a97b; color: white; }
+
   </style>
 </head>
 <body>
@@ -238,6 +242,14 @@
           <button id="copyAddressBtn" class="copyBtn">Copy Address</button>
         </div>
       </div>
+      <div id="refundModal" class="modal">
+        <div class="modal-content">
+          <span id="closeRefundModal" class="close">&times;</span>
+          <h3>Refund Details</h3>
+          <div id="refundDetails"></div>
+        </div>
+      </div>
+
 
 
       <table>
@@ -248,6 +260,7 @@
             <th>Products</th>
             <th>Shipping Info</th>
             <th>Status</th>
+            <th>Refund</th>
             <th>Actions</th>
           </tr>
         </thead>

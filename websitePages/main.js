@@ -1,6 +1,6 @@
 // main.js --> buyer page js file
 
-// Supabase setup
+// Initializes Supabase connection for database and authentication
 const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
 
@@ -14,7 +14,7 @@ const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   },
 });
 
-// Navbar scroll hide/show
+// Tracks scroll direction to hide or show the navbar
 let lastScrollY = window.scrollY;
 const navbar = document.getElementById("navbar");
 
@@ -27,7 +27,7 @@ window.addEventListener("scroll", () => {
   lastScrollY = window.scrollY;
 });
 
-// Load products dynamically from Supabase
+// Loads products from the database and displays them on the page
 async function loadProducts(searchTerm = "") {
   let query = client
     .from("products")
@@ -37,6 +37,7 @@ async function loadProducts(searchTerm = "") {
     .order("created_at", { ascending: false })
     .limit(20);
 
+  // Filters products if a search term is entered
   if (searchTerm) {
     query = query.ilike("name", `%${searchTerm}%`);
   }
@@ -51,11 +52,13 @@ async function loadProducts(searchTerm = "") {
   const productsGrid = document.getElementById("productsGrid");
   productsGrid.innerHTML = "";
 
+  // Displays message when no products match the search
   if (products.length === 0) {
     productsGrid.innerHTML = "<p style='text-align:center;'>No products found.</p>";
     return;
   }
 
+  // Creates product cards and adds "Add to Cart" buttons
   products.forEach(product => {
     const productDiv = document.createElement("div");
     productDiv.className = "product"; // change the innerHTML before prod
@@ -76,11 +79,13 @@ async function loadProducts(searchTerm = "") {
   });
 }
 
+// Runs search when search button is pressed
 searchBtn.addEventListener("click", () => {
   const term = searchInput.value.trim();
   loadProducts(term);
 });
 
+// Runs search on Enter key
 searchInput.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
     const term = searchInput.value.trim();
@@ -88,10 +93,7 @@ searchInput.addEventListener("keyup", (e) => {
   }
 });
 
-// =======================
-// ADD TO CART FUNCTIONALITY
-// =======================
-
+// Adds the selected product to the user's cart
 async function addToCart(productId) {
   try {
     const { data: { user }, error: userError } = await client.auth.getUser();
@@ -100,7 +102,7 @@ async function addToCart(productId) {
       return;
     }
 
-    // Check stock before proceeding
+    // Verifies product stock before adding to cart
     const { data: product, error: prodErr } = await client
       .from("products")
       .select("quantity_available, name")
@@ -113,12 +115,13 @@ async function addToCart(productId) {
       return;
     }
 
+    // Checks if the product is in stock
     if (product.quantity <= 0) {
       alert(`Sorry, ${product.name} is out of stock.`);
       return;
     }
 
-    // Get or create cart for buyer
+    // Retrieves or creates a cart for the current user
     let { data: existingCart, error: cartError } = await client
       .from("carts")
       .select("id")
@@ -140,7 +143,7 @@ async function addToCart(productId) {
       cartId = existingCart[0].id;
     }
 
-    // Add or update cart item
+    // Adds item or increases quantity in the cart
     const { data: existingItem, error: itemError } = await client
       .from("cart_items")
       .select("id, quantity")
@@ -176,7 +179,8 @@ async function addToCart(productId) {
     alert("Failed to add item to cart.");
   }
 }
-// Load products on page load
+
+// Loads products when the page opens
 loadProducts();
 document.addEventListener("DOMContentLoaded", async () => {
   const sellLink = document.getElementById("wantToSellLink");
@@ -195,6 +199,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   sellLink.style.display = "none";
   logoutLink.style.display = "none";
 
+  // Shows or hides navbar links depending on login state
   const toggleNavState = (loggedIn) => {
   console.log("toggleNavState -> loggedIn:", loggedIn);
   if (loggedIn) {
@@ -250,6 +255,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await client.auth.signOut();
     toggleNavState(false);
     alert("You’ve been logged out!");
-    window.location.href = "/index.html"; // change back for prod
+    window.location.href = "/index.html";
   });
 });

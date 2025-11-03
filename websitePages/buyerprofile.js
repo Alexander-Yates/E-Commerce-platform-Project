@@ -1,4 +1,4 @@
-// buyerprofile.js
+// Initializes Supabase client for authentication and database use
 const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
 
@@ -7,6 +7,7 @@ const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Gets references to UI elements
   const nameEl = document.getElementById("buyerName");
   const emailEl = document.getElementById("buyerEmail");
   const joinDateEl = document.getElementById("joinDate");

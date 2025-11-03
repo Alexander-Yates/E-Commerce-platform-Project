@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Product Details | Doodle & Stick</title>
+  
   <style>
+    /* Sets base font, background, and page layout */
     body {
       font-family: 'Poppins', sans-serif;
       background: #f5edd8;
@@ -13,6 +15,7 @@
       padding: 0;
     }
 
+    /* Main product card container */
     .container {
       max-width: 900px;
       margin: 4rem auto;
@@ -24,17 +27,20 @@
       flex-wrap: wrap;
     }
 
+    /* Image container styling */
     .image {
       flex: 1 1 400px;
       min-width: 300px;
     }
 
+    /* Ensures product image fills the space properly */
     .image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
+    /* Product text section styling */
     .details {
       flex: 1 1 400px;
       padding: 2rem;
@@ -49,12 +55,14 @@
       margin: 0.5rem 0;
     }
 
+    /* Large styled product price text */
     .price {
       font-size: 1.4rem;
       color: #4b8c8d;
       font-weight: bold;
     }
 
+    /* Add to cart button styling */
     .add-btn {
       background: #d1a05a;
       color: white;
@@ -70,6 +78,7 @@
       background: #f7a97b;
     }
 
+    /* Back link above product */
     a.back {
       display: inline-block;
       margin: 2rem;
@@ -81,12 +90,14 @@
 </head>
 <body>
 
+  <!-- Returns user back to home product page -->
   <a href="index.html" class="back">← Back to Shop</a>
 
+  <!-- Product details are dynamically inserted into this container -->
   <div class="container" id="productContainer">
-    <!-- Product details will be inserted here dynamically -->
   </div>
 
+  <!-- Supabase client + dynamic product script -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="product.js" defer></script>
 </body>

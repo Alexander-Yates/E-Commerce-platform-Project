@@ -1,19 +1,20 @@
-// product.js
+// Initializes Supabase client for database and authentication
 const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Get product ID from URL
+// Retrieves the product ID from the URL query string
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
 
-// Fetch and display product details
+// Loads product information from the database and displays it
 async function loadProduct() {
   if (!productId) {
     document.getElementById("productContainer").innerHTML = "<p>Product not found.</p>";
     return;
   }
 
+  // Fetches product details including category name
   const { data: product, error } = await client
   .from("products")
   .select(`
@@ -29,13 +30,14 @@ async function loadProduct() {
   .eq("id", productId)
   .single();
 
-
+  // Shows error message if product data fails to load
   if (error || !product) {
     console.error("Error fetching product:", error);
     document.getElementById("productContainer").innerHTML = "<p>Unable to load product.</p>";
     return;
   }
 
+  // Inserts product information into the page layout
   const container = document.getElementById("productContainer");
   container.innerHTML = `
     <div class="image">
@@ -50,17 +52,21 @@ async function loadProduct() {
     </div>
   `;
 
+  // Handles the Add to Cart button click
   document.getElementById("addToCartBtn").addEventListener("click", () => addToCart(product.id));
 }
 
+// Adds the selected product to the user's cart
 async function addToCart(productId) {
   try {
+    // Confirms user is logged in before adding to cart
     const { data: { user }, error: userError } = await client.auth.getUser();
     if (userError || !user) {
       alert("Please log in to add items to your cart.");
       return;
     }
 
+    // Retrieves or creates the user's cart
     let { data: existingCart, error: cartError } = await client
       .from("carts")
       .select("id")
@@ -82,6 +88,7 @@ async function addToCart(productId) {
       cartId = existingCart[0].id;
     }
 
+    // Checks if the product is already in the cart
     const { data: existingItem, error: itemError } = await client
       .from("cart_items")
       .select("id, quantity")
@@ -91,6 +98,7 @@ async function addToCart(productId) {
 
     if (itemError) throw itemError;
 
+    // Updates quantity if item exists, otherwise inserts new cart item
     if (existingItem) {
       const { error: updateError } = await client
         .from("cart_items")
@@ -111,4 +119,5 @@ async function addToCart(productId) {
   }
 }
 
+// Loads product information when the page is opened
 loadProduct();

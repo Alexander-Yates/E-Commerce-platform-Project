@@ -48,13 +48,6 @@ async function loadProduct() {
       <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
       <p><strong>Description:</strong> ${product.description || 'No description available.'}</p>
       <p><strong>Category:</strong> ${product.categories?.name || 'Uncategorized'}</p>
-
-      <!-- Average rating and total reviews section -->
-      <div id="productReviews" class="reviews-summary">
-        <p>Average Rating: —</p>
-        <p>Total Reviews: —</p>
-      </div>
-
       <button class="add-btn" id="addToCartBtn">Add to Cart</button>
     </div>
   `;
@@ -64,9 +57,6 @@ async function loadProduct() {
 
   // Loads related products based on similarity
   loadRelatedProducts(product.name, product.id);
-
-  // Loads product review information
-  loadProductReviews(product.id);
 }
 
 // Adds the selected product to the user's cart
@@ -132,69 +122,34 @@ async function addToCart(productId) {
   }
 }
 
-// Loads average rating and total review count for a product
-async function loadProductReviews(productId) {
-  // Fetch all orders that include this product and have a rating
-  const { data: reviews, error } = await client
-    .from("orders")
-    .select("rating, product_id")
-    .eq("product_id", productId)
-    .not("rating", "is", null);
-
-  const reviewBox = document.getElementById("productReviews");
-
-  if (error) {
-    console.error("Error loading reviews:", error);
-    reviewBox.innerHTML = `<p>Average Rating: —</p><p>Total Reviews: —</p>`;
-    return;
-  }
-
-  if (!reviews || reviews.length === 0) {
-    reviewBox.innerHTML = `
-      <p>Average Rating: —</p>
-      <p>Total Reviews: 0</p>
-    `;
-    return;
-  }
-
-  const ratings = reviews.map(r => r.rating);
-  const avg = (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1);
-  const stars = "★".repeat(Math.round(avg)) + "☆".repeat(5 - Math.round(avg));
-
-  reviewBox.innerHTML = `
-    <p><strong>${stars}</strong> (${avg}/5)</p>
-    <p>Total Reviews: ${reviews.length}</p>
-  `;
-}
-
+// Loads related products by name similarity
 async function loadRelatedProducts(productName, currentProductId) {
   const { data: related, error } = await client
     .from("products")
     .select("id, name, price, image_url")
     .eq("is_active", true)
     .eq("is_approved", true)
-    .filter("id", "neq", currentProductId) // do not include the same product
-    .limit(200); // temporary broad fetch
+    .filter("id", "neq", currentProductId)
+    .limit(200); // broad fetch for comparison
 
   if (error) {
     console.error("Error loading related products:", error);
     return;
   }
 
-  // Compute similarity score manually (fallback if pg_trgm not available)
+  // Basic similarity function by shared words
   function similarity(a, b) {
     a = a.toLowerCase().split(" ");
     b = b.toLowerCase().split(" ");
-
     return a.filter(word => b.includes(word)).length;
   }
 
-  // Sort by best name similarity
+  // Sort by similarity and show top 4
   const sorted = related
     .map(r => ({ ...r, score: similarity(productName, r.name) }))
-    .filter(r => r.score > 0)       // only keep those with matching keywords
+    .filter(r => r.score > 0)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 4); // top 4 matches
+    .slice(0, 4);
 
   const container = document.getElementById("relatedProducts");
   container.innerHTML = "";

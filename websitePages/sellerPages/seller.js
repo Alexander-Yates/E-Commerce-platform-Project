@@ -1,4 +1,4 @@
-// --- Supabase Setup ---
+// seller.js
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
@@ -9,7 +9,6 @@ const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: { persistSession: true, autoRefreshToken: true },
 });
 
-// --- DOM References ---
 const addProductBtn = document.getElementById("addProductBtn");
 const addProductModal = document.getElementById("addProductModal");
 const closeModal = document.getElementById("closeModal");
@@ -22,7 +21,6 @@ const dropdown = document.getElementById("sellerNotifDropdown");
 const list = document.getElementById("notificationsList");
 
 
-// --- Modal Controls ---
 addProductBtn.addEventListener("click", () => {
   addProductModal.style.display = "flex";
 });
@@ -31,7 +29,6 @@ closeModal.addEventListener("click", () => {
   addProductModal.style.display = "none";
 });
 
-// --- Display logged-in seller's name in navbar ---
 async function displaySellerName() {
   const { data: { user }, error } = await client.auth.getUser();
 
@@ -150,7 +147,6 @@ async function addNotifcation(userId, message) {
   if (error) console.error("Failed to add notification:", error);
 }
 
-// --- Fetch and Display Seller Products ---
 async function loadProducts() {
   const {
     data: { user },
@@ -203,8 +199,69 @@ async function loadProducts() {
     productTableBody.appendChild(row);
   });
   cachedProducts = products;
-  renderProducts(products);
+  currentPage = 1; // reset to first page
+  renderProductsPage();
+}
+async function loadSellerStats() {
+  const { data: { user }, error: userError } = await client.auth.getUser();
+  if (userError || !user) {
+    console.error("User not logged in:", userError);
+    return;
+  }
 
+  console.log("Seller ID:", user.id);
+  const { count: activeCount, error: activeError } = await client
+    .from("products")
+    .select("*", { count: "exact", head: true })
+    .eq("seller_id", user.id)
+    .eq("is_active", true);
+
+  if (activeError) console.error("Error fetching active products:", activeError);
+
+  const { data: sellerOrders, error: ordersError } = await client
+    .from("order_items")
+    .select(`
+      id,
+      order_id,
+      products!inner(seller_id)
+    `)
+    .eq("products.seller_id", user.id);
+
+  if (ordersError) console.error("Error fetching orders:", ordersError);
+
+  const uniqueOrders = new Set(sellerOrders.map((o) => o.order_id)).size;
+  const { data: transactions, error: txError } = await client
+    .from("transactions")
+    .select("amount")
+    .eq("seller_id", user.id)
+    .eq("payment_status", "success");
+
+  console.log("🔹 Transactions query result:", transactions, "Error:", txError);
+  if (txError) console.error("Error fetching transactions:", txError);
+  const totalSales = (transactions ?? []).reduce((sum, t) => sum + (t.amount || 0), 0);
+
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now);
+  thirtyDaysAgo.setDate(now.getDate() - 30);
+  const monthStart = thirtyDaysAgo.toISOString();
+
+  console.log("Revenue since:", monthStart);
+
+  const { data: monthlyTx, error: monthError } = await client
+    .from("transactions")
+    .select("amount, created_at")
+    .eq("seller_id", user.id)
+    .eq("payment_status", "success")
+    .gte("created_at", monthStart);
+
+  console.log("Monthly transactions query result:", monthlyTx, "Error:", monthError);
+
+  const monthlyRevenue = (monthlyTx ?? []).reduce((sum, t) => sum + (t.amount || 0), 0);
+  document.getElementById("monthlyRevenue").textContent = `$${monthlyRevenue.toFixed(2)}`;
+  document.getElementById("totalSales").textContent = `$${totalSales.toFixed(2)}`;
+  document.getElementById("orderCount").textContent = uniqueOrders;
+  document.getElementById("activeProducts").textContent = activeCount || 0;
+  document.getElementById("monthlyRevenue").textContent = `$${monthlyRevenue.toFixed(2)}`;
 }
 
 function renderProducts(products) {
@@ -231,7 +288,6 @@ function renderProducts(products) {
   });
 }
 
-// --- Add Product Form Submission ---
 addProductForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -262,7 +318,7 @@ if (file) {
   const filePath = `products/${fileName}`;
 
   const { error: uploadError } = await client.storage
-    .from('product-images') // name of your Supabase storage bucket
+    .from('product-images') 
     .upload(filePath, file, {
       cacheControl: '3600',
       upsert: false,
@@ -281,7 +337,6 @@ if (file) {
   imageUrl = publicUrlData.publicUrl;
 }
 
-  // --- if editing an existing product ---
   if (editingProductId) {
     const { error } = await client
       .from("products")
@@ -308,7 +363,6 @@ if (file) {
     document.getElementById("modalTitle").textContent = "Add New Product";
     document.getElementById("saveProductBtn").textContent = "Save Product";
   } else {
-    // --- creating a new product ---
     const { error } = await client.from("products").insert([
       {
         seller_id: user.id,
@@ -331,9 +385,7 @@ if (file) {
       return;
     }
 
-    alert("✅ Product added successfully!");
-
-    // notif for new product
+    alert("Product added successfully!");
     addNotifcation(user.id, 'Your product "${name}" has been submitted and is pending approval.');
   }
 
@@ -385,7 +437,6 @@ list.addEventListener("click", async (e) => {
 });
 
 
-// --- Delete Product ---
 productTableBody.addEventListener("click", async (e) => {
   if (e.target.classList.contains("deleteBtn")) {
     const id = e.target.getAttribute("data-id");
@@ -425,7 +476,6 @@ productTableBody.addEventListener("click", async (e) => {
   }
 });
 
-// --- Edit Product ---
 let editingProductId = null;
 
 productTableBody.addEventListener("click", async (e) => {
@@ -461,8 +511,6 @@ productTableBody.addEventListener("click", async (e) => {
   }
 });
 
-
-// --- Load Categories into Dropdown ---
 async function loadCategories() {
   const { data: categories, error } = await client.from("categories").select("*");
 
@@ -497,10 +545,43 @@ productImageInput.addEventListener("change", () => {
   }
 });
 
-
-// --- Sorting Logic ---
 let currentSort = { key: null, direction: 'asc' };
 let cachedProducts = [];
+
+let currentPage = 1;
+const productsPerPage = 9;
+
+function renderProductsPage() {
+  const start = (currentPage - 1) * productsPerPage;
+  const end = start + productsPerPage;
+  const paginatedProducts = cachedProducts.slice(start, end);
+  renderProducts(paginatedProducts);
+  updatePaginationControls();
+}
+
+function updatePaginationControls() {
+  const totalPages = Math.ceil(cachedProducts.length / productsPerPage);
+  document.getElementById("pageInfo").textContent = `Page ${currentPage} of ${totalPages}`;
+
+  document.getElementById("prevPageBtn").disabled = currentPage === 1;
+  document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
+}
+
+document.getElementById("prevPageBtn").addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderProductsPage();
+  }
+});
+
+document.getElementById("nextPageBtn").addEventListener("click", () => {
+  const totalPages = Math.ceil(cachedProducts.length / productsPerPage);
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderProductsPage();
+  }
+});
+
 
 function sortProducts(key) {
   if (currentSort.key === key) {
@@ -523,14 +604,15 @@ function sortProducts(key) {
     if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
     return 0;
   });
-
-  renderProducts(sorted);
+  cachedProducts = sorted;
+  currentPage = 1;
+  renderProductsPage();
 }
 
-
-// --- Initialize Dashboard ---
 loadCategories();
 loadProducts();
+loadSellerStats();
+
 
 document.querySelectorAll(".sort-btn").forEach((btn) => {
   btn.addEventListener("click", () => {

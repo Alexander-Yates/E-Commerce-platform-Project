@@ -2,7 +2,9 @@
 <html>
 <head>
   <title>Login - Doodle & Stick</title>
+  
   <style>
+    /* Sets the background, font, and centers the login box */
     body {
       margin: 0;
       font-family: 'Poppins', 'Segoe UI', sans-serif;
@@ -15,6 +17,7 @@
       color: #333333;
     }
 
+    /* Website name at top that links back to home */
     .brand-logo {
       font-size: 32px;
       font-weight: bold;
@@ -28,6 +31,7 @@
       color: #8C5E35;
     }
 
+    /* Main login box styling */
     .login-container {
       background: #FFFFFF;
       padding: 40px;
@@ -37,6 +41,7 @@
       max-width: 380px;
     }
 
+    /* Page title inside the login box */
     .login-container h2 {
       text-align: center;
       margin-bottom: 25px;
@@ -44,10 +49,12 @@
       font-weight: 600;
     }
 
+    /* Spacing for input groups */
     .form-group {
       margin-bottom: 18px;
     }
 
+     /* Label styling above each input */
     .form-group label {
       display: block;
       margin-bottom: 6px;
@@ -55,6 +62,7 @@
       color: #5C5C5C;
     }
 
+    /* Input fields appearance */
     .form-group input {
       width: 100%;
       padding: 10px 12px;
@@ -64,12 +72,14 @@
       background-color: #FFFAF0;
     }
 
+    /* Highlight input when selected */
     .form-group input:focus {
       outline: none;
       border-color: #A97449;
       box-shadow: 0 0 4px rgba(169, 116, 73, 0.3);
     }
 
+    /* Login button styling */
     .btn {
       width: 100%;
       padding: 12px;
@@ -83,10 +93,12 @@
       font-weight: 600;
     }
 
+    /* Button hover effect */
     .btn:hover {
       background: #8C5E35;
     }
 
+     /* Container for links under login button */
     .extra-links {
       text-align: center;
       margin-top: 20px;
@@ -103,6 +115,7 @@
       text-decoration: underline;
     }
 
+    /* Displayed if login fails */
     .error-message {
       color: #C0392B;
       font-size: 14px;
@@ -111,6 +124,7 @@
       text-align: center;
     }
 
+    /* Loader text appears while logging in */
     .loader {
       display: none;
       text-align: center;
@@ -119,13 +133,20 @@
     }
   </style>
 </head>
+
 <body>
 
+  <!-- Logo link that returns user to home page -->
   <a href="index.html" class="brand-logo">Doodle & Stick</a>
 
+  <!-- Login box -->
   <div class="login-container">
     <h2>Login</h2>
+    
+    <!-- Error message container -->
     <div id="error" class="error-message"></div>
+    
+    <!-- Login form -->
     <form id="login-form">
       <div class="form-group">
         <label for="email">Email</label>
@@ -137,17 +158,19 @@
         <input type="password" id="password" placeholder="Enter your password" required>
       </div>
 
+      <!-- Login button and loading feedback -->
       <button type="submit" class="btn">Login</button>
       <div class="loader" id="loader">Logging in...</div>
     </form>
 
+    <!-- Additional navigation links -->
     <div class="extra-links">
       <p><a href="#" id="forgot-password">Forgot Password?</a></p>
       <p>Don’t have an account? <a href="signup.html">Sign Up</a></p>
     </div>
   </div>
 
-  <!-- Supabase client + your JS -->
+  <!-- Supabase authentication client + login logic -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="login.js"></script>
 </body>

@@ -1,32 +1,34 @@
-// Supabase setup
+// Initializes Supabase client for authentication and database access
 const SUPABASE_URL = "https://mxnagoeammjedhmbfjud.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bmFnb2VhbW1qZWRobWJmanVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDc2NjAsImV4cCI6MjA3MjU4MzY2MH0.H_9TQF6QB0nC0PTl2BMR07dopXXLFRUHPHl7ydPUbss";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth:{
-    persistSession: true,
-    autoRefreshToken: true,
+    persistSession: true, // Keeps user logged in between page reloads
+    autoRefreshToken: true, // Automatically refreshes expired session tokens
   },
 })
 
-// DOM references
+// Form and UI element references
 const loginForm = document.getElementById("login-form");
 const errorDiv = document.getElementById("error");
 const loader = document.getElementById("loader");
 const forgotPasswordLink = document.getElementById("forgot-password");
 
-// Handle login
+// Handles the login form submission
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   errorDiv.style.display = "none";
   loader.style.display = "block";
 
+  // Reads input and normalizes email format
   const email = document.getElementById("email").value.trim().toLowerCase(); // added toLowerCase so supabase is happy
   const password = document.getElementById("password").value;                // supabase autos to all lowercase
 
-  // Attempt login
+  // Attempts to sign in using Supabase authentication
   const { data: { user, session }, error } = await client.auth.signInWithPassword({ email, password });
 
+  // Displays an error if login fails
   if (error) {
     errorDiv.textContent = error.message;
     errorDiv.style.display = "block";
@@ -34,7 +36,7 @@ loginForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Check users table for extra info
+  // Retrieves user role and status from the custom users table
   const { data: userRecord, error: fetchError } = await client
     .from("users")
     .select("role, is_active")
@@ -42,6 +44,7 @@ loginForm.addEventListener("submit", async (e) => {
     .maybeSingle();
     console.log("Query result:", { userRecord, fetchError});
 
+  // Handles missing user data
   if (fetchError || !userRecord) {
     errorDiv.textContent = "User record not found.";
     errorDiv.style.display = "block";
@@ -49,6 +52,7 @@ loginForm.addEventListener("submit", async (e) => {
     return;
   }
 
+  // Blocks login if the account is disabled
   if (!userRecord.is_active) {
     errorDiv.textContent = "Your account is inactive. Please contact support.";
     errorDiv.style.display = "block";
@@ -59,35 +63,39 @@ loginForm.addEventListener("submit", async (e) => {
   loader.style.display = "none";
   alert("Login successful!");
 
+  // Redirects based on user role
   switch (userRecord.role) {
     case "admin":
-      window.location.href = "/adminPages/index.html"; // change back for prod
+      window.location.href = "/adminPages/index.html";
       break;
     case "seller":
-      window.location.href = "/sellerPages/index.html"; // change back for prod
+      window.location.href = "/sellerPages/index.html";
       break;
     case "buyer":
     default:
-      window.location.href = "/index.html"; // change back for prod
+      window.location.href = "/index.html";
      break;
 }
   
   
 });
 
-// Handle forgot password
+// Handles forgotten password requests
 forgotPasswordLink.addEventListener("click", async (e) => {
   e.preventDefault();
   const email = document.getElementById("email").value.trim(); 
 
+  // Ensures email is entered before sending reset link
   if (!email) {
     errorDiv.textContent = "Please enter your email above first.";
     errorDiv.style.display = "block";
     return;
   }
 
+  // Sends a password reset email through Supabase
   const { data, error } = await client.auth.resetPasswordForEmail(email);
 
+  // Displays error if reset fails
   if (error) {
     errorDiv.textContent = error.message;
     errorDiv.style.display = "block";

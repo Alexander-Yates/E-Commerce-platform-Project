@@ -102,6 +102,13 @@ function renderOrders() {
         ? "confirmed"
         : "pending";
 
+    const refundStatus =
+      normalizedStatus === "refund_requested"
+        ? "requested"
+        : normalizedStatus === "refunded"
+        ? "refunded"
+        : null;
+
     const isShipped = normalizedStatus === "shipped";
 
     const row = document.createElement("tr");

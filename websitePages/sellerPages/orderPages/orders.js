@@ -123,7 +123,9 @@ function renderOrders() {
       <td><span class="status-badge ${statusClass}">${normalizedStatus}</span></td>
       <td>
         ${
-          isShipped
+          refundStatus
+            ? `<button class="actionBtn" disabled style="opacity:0.6;cursor;not-allowed;">Refund in Progress</button>`
+            : isShipped
             ? `<button class="actionBtn" disabled>Fulfilled</button>`
             : `<button class="actionBtn" data-id="${order.id}" data-status="${normalizedStatus}">Mark Shipped</button>`
         }

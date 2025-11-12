@@ -151,6 +151,7 @@ function renderOrders() {
   });
 
   attachModalLogic();
+  attachRefundLogic();
 }
 
 function attachModalLogic() {
@@ -251,7 +252,7 @@ function attachRefundLogic() {
     });
   });
 
-  const closeRefundModal = document.getElementById("closeRefundMOdal");
+  const closeRefundModal = document.getElementById("closeRefundModal");
   closeRefundModal.onclick = () => {
     document.getElementById("refundModal").style.display = "none";
   };

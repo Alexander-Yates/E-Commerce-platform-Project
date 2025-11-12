@@ -78,6 +78,19 @@
       background: #f7a97b;
     }
 
+    /* Review summary styling */
+    .reviews-summary {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: #f5edd8;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #4b8c8d;
+    }
+    .reviews-summary p {
+      margin: 0.25rem 0;
+    }
+
     /* Back link above product */
     a.back {
       display: inline-block;
@@ -135,6 +148,23 @@
 
   <!-- Product details are dynamically inserted into this container -->
   <div class="container" id="productContainer">
+    <div class="image">
+      <img src="" alt="">
+    </div>
+    <div class="details">
+      <h1 id="productName"></h1>
+      <p class="price" id="productPrice"></p>
+      <p><strong>Description:</strong> <span id="productDescription"></span></p>
+      <p><strong>Category:</strong> <span id="productCategory"></span></p>
+
+      <!-- Average rating and total reviews section -->
+      <div id="productReviews" class="reviews-summary">
+        <p>Average Rating: —</p>
+        <p>Total Reviews: —</p>
+      </div>
+
+      <button class="add-btn" id="addToCartBtn">Add to Cart</button>
+    </div>
   </div>
 
   <h2 style="text-align:center; color:#a46a42; margin-top: 3rem;">Related Products</h2>

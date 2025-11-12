@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Fetch all orders linked to the current user
   const { data: orders, error: ordersError } = await client
     .from("orders")
-    .select("id, status, created_at, confirmed_at, shipped_at, full_name, city, state")
+    .select("id, status, created_at, confirmed_at, shipped_at, full_name, city, state, rating")
     .eq("buyer_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -78,9 +78,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         <p>Recipient: ${order.full_name || "—"}</p>
         <p>Location: ${order.city || ""}${order.state ? ", " + order.state : ""}</p>
         <br>
+        <button class="review-btn" data-id="${order.id}" ${order.rating ? "disabled" : ""}>
+          ${order.rating ? "Review Submitted" : "Leave Review"}
+        </button>
         <button class="refund-btn" data-id="${order.id}" ${order.status === "refund_requested" ? "disabled" : ""}>
           ${order.status === "refund_requested" ? "Refund Requested" : "Request Refund"}
         </button>
+        <div class="order-review" id="review-${order.id}">
+          ${order.rating ? "★".repeat(order.rating) : ""}
+        </div>
       `;
       ordersList.appendChild(div);
     });
@@ -108,6 +114,69 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.target.disabled = true;
       }
     }
+  });
+
+  let selectedStars = 0;
+  let currentOrderId = null;
+
+  // Open popup
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("review-btn")) {
+      currentOrderId = e.target.getAttribute("data-id");
+      document.getElementById("reviewPopup").classList.remove("hidden");
+    }
+  });
+
+  // Star selection (left-to-right highlight)
+  document.addEventListener("click", (e) => {
+    if (e.target.matches(".star-select span")) {
+      const clickedStar = parseInt(e.target.dataset.star);
+      const allStars = document.querySelectorAll(".star-select span");
+      allStars.forEach(star => {
+        const starNum = parseInt(star.dataset.star);
+        if (starNum <= clickedStar) {
+          star.classList.add("selected");
+        } else {
+          star.classList.remove("selected");
+        }
+      });
+      selectedStars = clickedStar;
+    }
+  });
+
+  // Confirm or cancel buttons
+  document.getElementById("confirmReview").addEventListener("click", async () => {
+    if (!selectedStars || !currentOrderId) return;
+
+    const { error } = await client
+      .from("orders")
+      .update({ rating: selectedStars })
+      .eq("id", currentOrderId);
+
+    if (!error) {
+      const reviewContainer = document.getElementById(`review-${currentOrderId}`);
+      reviewContainer.innerHTML = "★".repeat(selectedStars);
+
+      const btn = document.querySelector(`.review-btn[data-id="${currentOrderId}"]`);
+      if (btn) {
+        btn.textContent = "Review Submitted";
+        btn.disabled = true;
+      }
+    } else {
+      console.error("Error saving review:", error);
+    }
+
+    document.getElementById("reviewPopup").classList.add("hidden");
+    document.querySelectorAll(".star-select span").forEach(s => s.classList.remove("selected"));
+    selectedStars = 0;
+    currentOrderId = null;
+  });
+
+  document.getElementById("cancelReview").addEventListener("click", () => {
+    document.getElementById("reviewPopup").classList.add("hidden");
+    document.querySelectorAll(".star-select span").forEach(s => s.classList.remove("selected"));
+    selectedStars = 0;
+    currentOrderId = null;
   });
 
   // Sign the user out when the logout button is clicked

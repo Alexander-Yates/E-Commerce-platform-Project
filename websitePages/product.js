@@ -16,19 +16,19 @@ async function loadProduct() {
 
   // Fetches product details including category name
   const { data: product, error } = await client
-  .from("products")
-  .select(`
-    id,
-    name,
-    description,
-    price,
-    image_url,
-    quantity_available,
-    category_id,
-    categories(name)
-  `)
-  .eq("id", productId)
-  .single();
+    .from("products")
+    .select(`
+      id,
+      name,
+      description,
+      price,
+      image_url,
+      quantity_available,
+      category_id,
+      categories(name)
+    `)
+    .eq("id", productId)
+    .single();
 
   // Shows error message if product data fails to load
   if (error || !product) {
@@ -55,6 +55,7 @@ async function loadProduct() {
   // Handles the Add to Cart button click
   document.getElementById("addToCartBtn").addEventListener("click", () => addToCart(product.id));
 
+  // Loads related products based on similarity
   loadRelatedProducts(product.name, product.id);
 }
 
@@ -121,34 +122,34 @@ async function addToCart(productId) {
   }
 }
 
+// Loads related products by name similarity
 async function loadRelatedProducts(productName, currentProductId) {
   const { data: related, error } = await client
     .from("products")
     .select("id, name, price, image_url")
     .eq("is_active", true)
     .eq("is_approved", true)
-    .filter("id", "neq", currentProductId) // do not include the same product
-    .limit(200); // temporary broad fetch
+    .filter("id", "neq", currentProductId)
+    .limit(200); // broad fetch for comparison
 
   if (error) {
     console.error("Error loading related products:", error);
     return;
   }
 
-  // Compute similarity score manually (fallback if pg_trgm not available)
+  // Basic similarity function by shared words
   function similarity(a, b) {
     a = a.toLowerCase().split(" ");
     b = b.toLowerCase().split(" ");
-
     return a.filter(word => b.includes(word)).length;
   }
 
-  // Sort by best name similarity
+  // Sort by similarity and show top 4
   const sorted = related
     .map(r => ({ ...r, score: similarity(productName, r.name) }))
-    .filter(r => r.score > 0)       // only keep those with matching keywords
+    .filter(r => r.score > 0)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 4); // top 4 matches
+    .slice(0, 4);
 
   const container = document.getElementById("relatedProducts");
   container.innerHTML = "";

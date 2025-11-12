@@ -78,13 +78,19 @@ async function loadOrders() {
     return;
   }
 
-  // Normalize into order-like structure for rendering
-  const orders = txOrders.map((t) => ({
-    ...t.orders,
-    transaction_id: t.id,
-    amount: t.amount,
-    payment_status: t.payment_status,
-  }));
+  const { data: transactions, error: transErr } = await client
+    .from("transactions")
+    .select("order_id, amount")
+    .in("order_id", orderIds);
+
+  if (transErr) {
+    console.error("Failed to fetch transactions:", transErr);
+  }
+
+  orders.forEach(order => {
+    const tx = transactions?.find(t => t.order_id === order.id);
+    order.amount = tx ? tx.amount : 0;//assign 0 if no transaction found
+  });
 
   // Cache data for filtering
   allOrders = orders;
@@ -126,23 +132,12 @@ function renderOrders() {
         ? "confirmed"
         : "pending";
 
-    const refundStatus = 
-      order.status === "refund_requested"
+    const refundStatus =
+      normalizedStatus === "refund_requested"
         ? "requested"
-        : order.status === "refunded"
+        : normalizedStatus === "refunded"
         ? "refunded"
         : null;
-
-    
-
-    const refundBadge = refundStatus
-      ? `<button class="actionBtn viewRefundBtn" 
-            data-id="${order.id}" 
-            data-status="${refundStatus}" 
-            data-amount="${order.amount || 0}">
-            View Refund
-          </button>`
-      : "";
 
     const isShipped = normalizedStatus === "shipped";
 
@@ -166,9 +161,20 @@ function renderOrders() {
       <td>${refundBadge}</td>
       <td>
         ${
-          isShipped
+          refundStatus
+            ? `<button class="actionBtn refundInProgressBtn"
+                data-id="${order.id}"
+                data-status="${refundStatus}"
+                data-amount="${order.amount || 0}">
+                Refund in Progress
+              </button>`
+            : isShipped
             ? `<button class="actionBtn" disabled>Fulfilled</button>`
-            : `<button class="actionBtn" data-id="${order.id}" data-status="${normalizedStatus}">Mark Shipped</button>`
+            : `<button class="actionBtn" 
+                data-id="${order.id}" 
+                data-status="${normalizedStatus}">
+                Mark Shipped
+              </button>`
         }
       </td>
     `;
@@ -179,8 +185,7 @@ function renderOrders() {
   attachRefundLogic();
 }
 
-
-function attachModalLogic() {
+const attachModalLogic = () => {
   document.querySelectorAll(".viewAddressBtn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const { name, address, address2, city, state, zip } = btn.dataset;
@@ -228,43 +233,100 @@ function attachModalLogic() {
       })
       .catch(() => alert("Unable to copy address."));
   };
-}
-function attachRefundLogic() {
-  document.querySelectorAll(".viewRefundBtn").forEach((btn) => {
+};
+
+const attachRefundLogic = () => {
+  document.querySelectorAll(".refundInProgressBtn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const modal = document.getElementById("refundModal");
       const details = document.getElementById("refundDetails");
 
+      const orderId = btn.dataset.id;
       const status = btn.dataset.status;
-      const amount = parseFloat(btn.dataset.amount).toFixed(2);
+      const amount = parseFloat(btn.dataset.amount ?? 0).toFixed(2);
 
       details.innerHTML = `
-        <p><strong>Status:</strong> ${
-          status === "requested" ? "Refund Requested" : "Refunded"
-        }</p>
+        <p><strong>Status:</strong> Refund Requested</p>
         <p><strong>Amount:</strong> $${amount}</p>
-        <p>This refund request is currently <b>${status}</b>. ${
-          status === "requested"
-            ? "You may review and confirm it in your dashboard once payment reversal is processed."
-            : "This refund has already been completed."
-        }</p>
+        <p>This refund request is currently <b>${status}</b>. Click below to complete the refund and mark this order as refunded.</p>
+        <button id="completeRefundBtn" class="actionBtn"
+          data-id="${orderId}"
+          style="margin-top:10px;background:var(--teal);">
+          Complete Refund
+        </button>
       `;
 
       modal.style.display = "flex";
+
+      //refund handler
+      const completeRefundBtn = document.getElementById("completeRefundBtn");
+      completeRefundBtn.addEventListener("click", async () => {
+        if (!confirm("Are you sure you want to complete this refund?")) return;
+
+        const { error: refundErr } = await client
+          .from("orders")
+          .update({
+            status: "refunded",
+            refunded_at: new Date().toISOString(),
+          })
+          .eq("id", orderId);
+        
+        if (refundErr) {
+          alert("Failed to complete refund.");
+          console.error(refundErr);
+          return;
+        }
+
+        const { data: transactionData, error: transErr } = await client
+          .from("transactions")
+          .select("amount, seller_id")
+          .eq("order_id", orderId)
+          .single();
+
+        if (transErr || !transactionData) {
+          console.error("Transaction not found:", transErr);
+        } else {
+          const refundAmount = Number(transactionData.amount ?? 0);
+          const sellerId = transactionData.seller_id;
+
+          const { error: updateSellerErr } = await client
+            .from("sellers")
+            .update({
+              total_sales: client.rpc("total_sales - ?", [refundAmount])
+            })
+            .eq("id", sellerId);
+
+          if (updateSellerErr) {
+            console.error("Failed to update seller's total sales:", updateSellerErr);
+          }
+        }
+
+        alert("Refund marked as completed.");
+        modal.style.display = "none";
+        loadOrders();
+      });
     });
   });
 
-  const modal = document.getElementById("refundModal");
-  const closeModal = document.getElementById("closeRefundModal");
-  closeModal.onclick = () => (modal.style.display = "none");
-  window.onclick = (e) => {
-    if (e.target === modal) modal.style.display = "none";
+  const closeRefundModal = document.getElementById("closeRefundModal");
+  closeRefundModal.onclick = () => {
+    document.getElementById("refundModal").style.display = "none";
   };
-}
+  window.onclick = (e) => {
+    if (e.target === document.getElementById("refundModal")) {
+      e.target.style.display = "none";
+    }
+  };
+};
 
 ordersTableBody.addEventListener("click", async (e) => {
   const btn = e.target.closest(".actionBtn");
-  if (!btn || btn.classList.contains("viewAddressBtn") || btn.disabled) return;
+  if (
+    !btn ||
+    btn.classList.contains("viewAddressBtn") ||
+    btn.classList.contains("refundInProgressBtn") ||
+    btn.disabled
+  ) return;
 
   const orderId = btn.dataset.id;
   if (!confirm("Mark this order as shipped?")) return;

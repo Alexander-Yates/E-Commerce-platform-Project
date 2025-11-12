@@ -259,6 +259,30 @@ function attachRefundLogic() {
           return;
         }
 
+        const { data: transactionData, error: transErr } = await client
+          .from("transactions")
+          .select("amount, seller_id")
+          .eq("order_id", orderId)
+          .single();
+
+        if (transErr || !transactionData) {
+          console.error("Transaction not found:", transErr);
+        } else {
+          const refundAmount = Number(transactionData.amount ?? 0);
+          const sellerId = transactionData.seller_id;
+
+          const { error: updateSellerErr } = await client
+            .from("sellers")
+            .update({
+              total_sales: client.rpc("total_sales - ?", [refundAmount])
+            })
+            .eq("id", sellerId);
+
+          if (updateSellerErr) {
+            console.error("Failed to update seller's total sales:", updateSellerErr);
+          }
+        }
+
         alert("Refund marked as completed.");
         modal.style.display = "none";
         loadOrders();

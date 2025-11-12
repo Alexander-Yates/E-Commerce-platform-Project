@@ -257,7 +257,7 @@ function attachRefundLogic() {
     document.getElementById("refundModal").style.display = "none";
   };
   window.onclick = (e) => {
-    if (e.target === document.getElementById("refundMOdal")) {
+    if (e.target === document.getElementById("refundModal")) {
       e.target.style.display = "none";
     }
   };

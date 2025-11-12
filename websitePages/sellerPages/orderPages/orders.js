@@ -168,7 +168,7 @@ function renderOrders() {
   attachRefundLogic();
 }
 
-function attachModalLogic() {
+const attachModalLogic = () => {
   document.querySelectorAll(".viewAddressBtn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const { name, address, address2, city, state, zip } = btn.dataset;
@@ -215,9 +215,9 @@ function attachModalLogic() {
       })
       .catch(() => alert("Unable to copy address."));
   };
-}
+};
 
-function attachRefundLogic() {
+const attachRefundLogic = () => {
   document.querySelectorAll(".refundInProgressBtn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const modal = document.getElementById("refundModal");
@@ -299,7 +299,7 @@ function attachRefundLogic() {
       e.target.style.display = "none";
     }
   };
-}
+};
 
 ordersTableBody.addEventListener("click", async (e) => {
   const btn = e.target.closest(".actionBtn");

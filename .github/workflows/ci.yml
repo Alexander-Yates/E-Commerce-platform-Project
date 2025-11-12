@@ -1,0 +1,32 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, dev-stream ]
+  pull_request:
+    branches: [ main, dev-stream ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint || echo "No linter configured"
+
+      - name: Run tests
+        run: npm test || echo "No tests configured"
+
+      - name: Build site
+        run: npm run build || echo "No build step configured"

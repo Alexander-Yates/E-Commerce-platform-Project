@@ -1,0 +1,24 @@
+{
+  "name": "e-commerce-platform-project",
+  "version": "1.0.0",
+  "description": "This repository contains an E-Commerce Platform for CSE 4214/6214. It supports Buyers, Sellers, and Admins with role-based features such as product search, purchase, sales, and account management.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alexander-Yates/E-Commerce-platform-Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Alexander-Yates/E-Commerce-platform-Project/issues"
+  },
+  "homepage": "https://github.com/Alexander-Yates/E-Commerce-platform-Project#readme",
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
+}

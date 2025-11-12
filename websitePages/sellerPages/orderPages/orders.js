@@ -66,6 +66,55 @@ async function loadOrders() {
   allSellerProducts = sellerProducts;
 
   renderOrders();
+
+  //logic for "Refund in Progress" btn
+  document.querySelectorAll(".refundInProgressBtn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const modal = document.getElementById("refundModal");
+      const details = document.getElementById("refundDetails");
+
+      const orderId = btn.dataset.id;
+      const status = btn.dataset.status;
+      const amount = parseFloat(btn.dataset.amount).toFixed(2);
+
+      details.innerHTML = `
+        <p><strong>Status:</strong> Refund Requested</p>
+        <p><strong>Amount:</strong> $${amount}</p>
+        <p>This refund request is currently <b>${status}</b>. Click below to complete the refund and mark this order as refunded.</p>
+        <button id="completeRefundBtn" class="actionBtn"
+          data-id="${orderId}"
+          style="margin-top:10px;background:var(--teal);">
+          Complete Refund
+        </button>
+      `;
+
+      modal.style.display = "flex";
+
+      //handler for complete refund
+      const completeRefundBtn = document.getElementById("completeRefundBtn");
+      completeRefundBtn.addEventListener("click", async () => {
+        if (!confirm("Are you sure you want to complete this refund?")) return;
+
+        const { error: refundErr } = await client
+          .from("orders")
+          .update({
+            status: "refunded",
+            refunded_at: new Date().toISOString(),
+          })
+          .eq("id", orderId);
+
+        if (refundErr) {
+          alert("Failed to complete refund.");
+          console.error(refundErr);
+          return;
+        }
+
+        alert("Refund marked as completed.");
+        modal.style.display = "none";
+        loadOrders(); //refresh table
+      })
+    })
+  })
 }
 
 function renderOrders() {
@@ -131,10 +180,19 @@ function renderOrders() {
       <td>
         ${
           refundStatus
-            ? `<button class="actionBtn" disabled style="opacity:0.6;cursor;not-allowed;">Refund in Progress</button>`
+            ? `<button class="actionBtn refundInProgressBtn"
+                data-id="${order.id}"
+                data-status="${refundStatus}"
+                data-amount="${order.amount || 0}">
+                Refund in Progress
+              </button>`
             : isShipped
             ? `<button class="actionBtn" disabled>Fulfilled</button>`
-            : `<button class="actionBtn" data-id="${order.id}" data-status="${normalizedStatus}">Mark Shipped</button>`
+            : `<button class="actionBtn" 
+                data-id="${order.id}" 
+                data-status="${normalizedStatus}">
+                Mark Shipped
+              </button>`
         }
       </td>
     `;

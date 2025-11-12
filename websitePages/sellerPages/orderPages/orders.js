@@ -66,55 +66,6 @@ async function loadOrders() {
   allSellerProducts = sellerProducts;
 
   renderOrders();
-
-  //logic for "Refund in Progress" btn
-  document.querySelectorAll(".refundInProgressBtn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const modal = document.getElementById("refundModal");
-      const details = document.getElementById("refundDetails");
-
-      const orderId = btn.dataset.id;
-      const status = btn.dataset.status;
-      const amount = parseFloat(btn.dataset.amount).toFixed(2);
-
-      details.innerHTML = `
-        <p><strong>Status:</strong> Refund Requested</p>
-        <p><strong>Amount:</strong> $${amount}</p>
-        <p>This refund request is currently <b>${status}</b>. Click below to complete the refund and mark this order as refunded.</p>
-        <button id="completeRefundBtn" class="actionBtn"
-          data-id="${orderId}"
-          style="margin-top:10px;background:var(--teal);">
-          Complete Refund
-        </button>
-      `;
-
-      modal.style.display = "flex";
-
-      //handler for complete refund
-      const completeRefundBtn = document.getElementById("completeRefundBtn");
-      completeRefundBtn.addEventListener("click", async () => {
-        if (!confirm("Are you sure you want to complete this refund?")) return;
-
-        const { error: refundErr } = await client
-          .from("orders")
-          .update({
-            status: "refunded",
-            refunded_at: new Date().toISOString(),
-          })
-          .eq("id", orderId);
-
-        if (refundErr) {
-          alert("Failed to complete refund.");
-          console.error(refundErr);
-          return;
-        }
-
-        alert("Refund marked as completed.");
-        modal.style.display = "none";
-        loadOrders(); //refresh table
-      })
-    })
-  })
 }
 
 function renderOrders() {
@@ -248,6 +199,66 @@ function attachModalLogic() {
         }, 2000);
       })
       .catch(() => alert("Unable to copy address."));
+  };
+}
+
+function attachRefundLogic() {
+  document.querySelectorAll(".refundInProgressBtn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const modal = document.getElementById("refundModal");
+      const details = document.getElementById("refundDetails");
+
+      const orderId = btn.dataset.id;
+      const status = btn.dataset.status;
+      const amount = parseFloat(btn.dataset.amount ?? 0).toFixed(2);
+
+      details.innerHTML = `
+        <p><strong>Status:</strong> Refund Requested</p>
+        <p><strong>Amount:</strong> $${amount}</p>
+        <p>This refund request is currently <b>${status}</b>. Click below to complete the refund and mark this order as refunded.</p>
+        <button id="completeRefundBtn" class="actionBtn"
+          data-id="${orderId}"
+          style="margin-top:10px;background:var(--teal);">
+          Complete Refund
+        </button>
+      `;
+
+      modal.style.display = "flex";
+
+      //refund handler
+      const completeRefundBtn = document.getElementById("completeRefundBtn");
+      completeRefundBtn.addEventListener("click", async () => {
+        if (!confirm("Are you sure you want to complete this refund?")) return;
+
+        const { error: refundErr } = await client
+          .from("orders")
+          .update({
+            status: "refunded",
+            refunded_at: new Date().toISOString(),
+          })
+          .eq("id", orderId);
+        
+        if (refundErr) {
+          alert("Failed to complete refund.");
+          console.error(refundErr);
+          return;
+        }
+
+        alert("Refund marked as completed.");
+        modal.style.display = "none";
+        loadOrders();
+      });
+    });
+  });
+
+  const closeRefundModal = document.getElementById("closeRefundMOdal");
+  closeRefundModal.onclick = () => {
+    document.getElementById("refundModal").style.display = "none";
+  };
+  window.onclick = (e) => {
+    if (e.target === document.getElementById("refundMOdal")) {
+      e.target.style.display = "none";
+    }
   };
 }
 

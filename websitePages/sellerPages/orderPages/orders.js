@@ -253,7 +253,12 @@ function attachModalLogic() {
 
 ordersTableBody.addEventListener("click", async (e) => {
   const btn = e.target.closest(".actionBtn");
-  if (!btn || btn.classList.contains("viewAddressBtn") || btn.disabled) return;
+  if (
+    !btn ||
+    btn.classList.contains("viewAddressBtn") ||
+    btn.classList.contains("refundInProgressBtn") ||
+    btn.disabled
+  ) return;
 
   const orderId = btn.dataset.id;
   if (!confirm("Mark this order as shipped?")) return;

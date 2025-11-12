@@ -16,19 +16,19 @@ async function loadProduct() {
 
   // Fetches product details including category name
   const { data: product, error } = await client
-  .from("products")
-  .select(`
-    id,
-    name,
-    description,
-    price,
-    image_url,
-    quantity_available,
-    category_id,
-    categories(name)
-  `)
-  .eq("id", productId)
-  .single();
+    .from("products")
+    .select(`
+      id,
+      name,
+      description,
+      price,
+      image_url,
+      quantity_available,
+      category_id,
+      categories(name)
+    `)
+    .eq("id", productId)
+    .single();
 
   // Shows error message if product data fails to load
   if (error || !product) {
@@ -48,6 +48,13 @@ async function loadProduct() {
       <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
       <p><strong>Description:</strong> ${product.description || 'No description available.'}</p>
       <p><strong>Category:</strong> ${product.categories?.name || 'Uncategorized'}</p>
+
+      <!-- Average rating and total reviews section -->
+      <div id="productReviews" class="reviews-summary">
+        <p>Average Rating: —</p>
+        <p>Total Reviews: —</p>
+      </div>
+
       <button class="add-btn" id="addToCartBtn">Add to Cart</button>
     </div>
   `;
@@ -55,7 +62,11 @@ async function loadProduct() {
   // Handles the Add to Cart button click
   document.getElementById("addToCartBtn").addEventListener("click", () => addToCart(product.id));
 
+  // Loads related products based on similarity
   loadRelatedProducts(product.name, product.id);
+
+  // Loads product review information
+  loadProductReviews(product.id);
 }
 
 // Adds the selected product to the user's cart
@@ -119,6 +130,41 @@ async function addToCart(productId) {
     console.error("Add to cart error:", err.message);
     alert("Failed to add item to cart.");
   }
+}
+
+// Loads average rating and total review count for a product
+async function loadProductReviews(productId) {
+  // Fetch all orders that include this product and have a rating
+  const { data: reviews, error } = await client
+    .from("orders")
+    .select("rating, product_id")
+    .eq("product_id", productId)
+    .not("rating", "is", null);
+
+  const reviewBox = document.getElementById("productReviews");
+
+  if (error) {
+    console.error("Error loading reviews:", error);
+    reviewBox.innerHTML = `<p>Average Rating: —</p><p>Total Reviews: —</p>`;
+    return;
+  }
+
+  if (!reviews || reviews.length === 0) {
+    reviewBox.innerHTML = `
+      <p>Average Rating: —</p>
+      <p>Total Reviews: 0</p>
+    `;
+    return;
+  }
+
+  const ratings = reviews.map(r => r.rating);
+  const avg = (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1);
+  const stars = "★".repeat(Math.round(avg)) + "☆".repeat(5 - Math.round(avg));
+
+  reviewBox.innerHTML = `
+    <p><strong>${stars}</strong> (${avg}/5)</p>
+    <p>Total Reviews: ${reviews.length}</p>
+  `;
 }
 
 async function loadRelatedProducts(productName, currentProductId) {

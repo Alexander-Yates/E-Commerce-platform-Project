@@ -49,13 +49,31 @@ async function loadOrders() {
 
   const orderIds = [...new Set(orderItems.map((oi) => oi.order_id))];
 
-  const { data: orders, error: orderErr } = await client
-    .from("orders")
-    .select("id, buyer_id, status, created_at, full_name, email, phone, address_line1, address_line2, city, state, zip")
-    .in("id", orderIds)
-    .order("created_at", { ascending: false });
+  // Fetch all transactions for this seller, joined with their related orders
+  const { data: txOrders, error: txErr } = await client
+    .from("transactions")
+    .select(`
+      id,
+      amount,
+      payment_status,
+      seller_id,
+      orders!inner(
+        id,
+        buyer_id,
+        full_name,
+        email,
+        address_line1,
+        address_line2,
+        city,
+        state,
+        zip,
+        status
+      )
+    `)
+    .eq("seller_id", user.id);
 
-  if (orderErr || !orders?.length) {
+  if (txErr || !txOrders?.length) {
+    console.error("Error fetching transactions/orders:", txErr);
     ordersTableBody.innerHTML = `<tr><td colspan="6" class="no-orders">No matching orders found.</td></tr>`;
     return;
   }
@@ -93,14 +111,12 @@ function renderOrders() {
         );
 
   if (!filteredOrders.length) {
-    ordersTableBody.innerHTML = `<tr><td colspan="6" class="no-orders">No orders for this filter.</td></tr>`;
+    ordersTableBody.innerHTML = `<tr><td colspan="7" class="no-orders">No orders for this filter.</td></tr>`;
     return;
   }
 
   filteredOrders.forEach((order) => {
-    const relatedItems = allOrderItems.filter(
-      (i) => i.order_id === order.id
-    );
+    const relatedItems = allOrderItems.filter((i) => i.order_id === order.id);
     const itemNames = relatedItems
       .map(
         (i) =>
@@ -142,6 +158,7 @@ function renderOrders() {
         </button>
       </td>
       <td><span class="status-badge ${statusClass}">${normalizedStatus}</span></td>
+      <td>${refundBadge}</td>
       <td>
         ${
           refundStatus
@@ -168,6 +185,7 @@ function renderOrders() {
   attachRefundLogic();
 }
 
+
 function attachModalLogic() {
   document.querySelectorAll(".viewAddressBtn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -187,6 +205,7 @@ function attachModalLogic() {
       modal.style.display = "flex";
     });
   });
+  
 
   const modal = document.getElementById("shippingModal");
   const closeModal = document.getElementById("closeModal");
@@ -214,6 +233,38 @@ function attachModalLogic() {
         }, 2000);
       })
       .catch(() => alert("Unable to copy address."));
+  };
+}
+function attachRefundLogic() {
+  document.querySelectorAll(".viewRefundBtn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const modal = document.getElementById("refundModal");
+      const details = document.getElementById("refundDetails");
+
+      const status = btn.dataset.status;
+      const amount = parseFloat(btn.dataset.amount).toFixed(2);
+
+      details.innerHTML = `
+        <p><strong>Status:</strong> ${
+          status === "requested" ? "Refund Requested" : "Refunded"
+        }</p>
+        <p><strong>Amount:</strong> $${amount}</p>
+        <p>This refund request is currently <b>${status}</b>. ${
+          status === "requested"
+            ? "You may review and confirm it in your dashboard once payment reversal is processed."
+            : "This refund has already been completed."
+        }</p>
+      `;
+
+      modal.style.display = "flex";
+    });
+  });
+
+  const modal = document.getElementById("refundModal");
+  const closeModal = document.getElementById("closeRefundModal");
+  closeModal.onclick = () => (modal.style.display = "none");
+  window.onclick = (e) => {
+    if (e.target === modal) modal.style.display = "none";
   };
 }
 
@@ -313,7 +364,7 @@ ordersTableBody.addEventListener("click", async (e) => {
   const orderId = btn.dataset.id;
   if (!confirm("Mark this order as shipped?")) return;
 
-  // Step 1: Update the order's status
+  // Update the order's status
   const { error: orderError } = await client
     .from("orders")
     .update({
@@ -328,7 +379,7 @@ ordersTableBody.addEventListener("click", async (e) => {
     return;
   }
 
-  // Step 2: Get all order items for this order
+  // Get all order items for this order
   const { data: items, error: itemErr } = await client
     .from("order_items")
     .select("product_id, quantity")
@@ -338,9 +389,9 @@ ordersTableBody.addEventListener("click", async (e) => {
     console.error("Error fetching order items:", itemErr);
     return;
   }
-  // Step 3: Loop through each product and reduce quantity
+  // Loop through each product and reduce quantity
 for (const item of items) {
-  // 1) Get current stock
+  // Get current stock
   const { data: productData, error: productErr } = await client
     .from("products")
     .select("quantity_available")
@@ -352,7 +403,7 @@ for (const item of items) {
     continue;
   }
 
-  // 2) Cast to numbers (avoid NaN -> null bug)
+  // Cast to numbers
   const current = Number(productData.quantity_available ?? 0);
   const delta = Number(item.quantity ?? 0);
 
@@ -368,7 +419,7 @@ for (const item of items) {
 
   const newQuantity = Math.max(current - delta, 0);
 
-  // 3) Update stock
+  // Update stock
   const { error: updateErr } = await client
     .from("products")
     .update({ quantity_available: newQuantity })
@@ -381,7 +432,7 @@ for (const item of items) {
     });
   }
 }
-  // Step 4: Update the UI instantly
+  // Update the UI
   const statusCell = btn.closest("tr").querySelector(".status-badge");
   statusCell.textContent = "shipped";
   statusCell.className = "status-badge shipped";
@@ -390,7 +441,7 @@ for (const item of items) {
   btn.style.opacity = "0.7";
   btn.style.cursor = "not-allowed";
 
-  // Step 5: Update cache
+  // Update cache
   const order = allOrders.find((o) => o.id === orderId);
   if (order) order.status = "shipped";
 });

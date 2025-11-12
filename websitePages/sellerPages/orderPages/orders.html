@@ -211,6 +211,10 @@
 
 
     .close:hover { color: var(--teal); }
+
+    .refunded { background: #b0b0b0; color: white; }
+    .requested { background: #f7a97b; color: white; }
+
   </style>
 </head>
 <body>
@@ -218,7 +222,7 @@
     <h1>Manage Orders</h1>
     <div class="right">
       <button class="navBtn" onclick="window.location.href='/sellerPages/index.html'">Dashboard</button>
-      <button class="navBtn" onclick="window.location.href='/websitePages/index.html'">Logout</button>
+      <button class="navBtn" onclick="window.location.href='/index.html'">Logout</button>
     </div>
   </header>
 
@@ -255,6 +259,7 @@
             <th>Products</th>
             <th>Shipping Info</th>
             <th>Status</th>
+            <th>Refund</th>
             <th>Actions</th>
           </tr>
         </thead>

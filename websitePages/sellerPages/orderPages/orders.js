@@ -60,6 +60,20 @@ async function loadOrders() {
     return;
   }
 
+  const { data: transactions, error: transErr } = await client
+    .from("transactions")
+    .select("order_id, amount")
+    .in("order_id", orderIds);
+
+  if (transErr) {
+    console.error("Failed to fetch transactions:", transErr);
+  }
+
+  orders.forEach(order => {
+    const tx = transactions?.find(t => t.order_id === order.id);
+    order.amount = tx ? tx.amount : 0;//assign 0 if no transaction found
+  });
+
   // Cache data for filtering
   allOrders = orders;
   allOrderItems = orderItems;

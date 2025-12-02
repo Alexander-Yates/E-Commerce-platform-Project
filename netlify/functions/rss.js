@@ -23,7 +23,7 @@ export default async function handler(req, context) {
   const rssItems = products
     .map((p) => {
       const pubDate = new Date(p.created_at).toUTCString();
-      const link = `https://doodleandstick.netlify.app${p.id}`;
+      const link = `https://doodleandstick.netlify.app/product/${p.id}`;
       return `
         <item>
           <title><![CDATA[${p.name}]]></title>

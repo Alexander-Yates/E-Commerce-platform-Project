@@ -51,7 +51,7 @@ export default async function handler(req, context) {
     <channel>
       <title>Doodle and Stick - Latest Products</title>
       <link>https://doodleandstick.netlify.app</link>
-      <description>Newly approved product listings from Doodle & Stick.</description>
+      <description>Newly approved product listings from Doodle and Stick.</description>
       <language>en-us</language>
       ${rssItems}
     </channel>

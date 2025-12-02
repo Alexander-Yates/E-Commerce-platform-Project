@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 export default async function handler(req, context) {
   const supabase = createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
+    process.env.SUPABASE_SERVICE_KEY
   );
 
   const { data: products, error } = await supabase

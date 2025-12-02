@@ -7,6 +7,7 @@ export default async function handler(req, context) {
     process.env.SUPABASE_SERVICE_KEY
   );
 
+  
   const { data: products, error } = await supabase
     .from("products")
     .select("id, name, description, price, image_url, created_at")
@@ -24,6 +25,10 @@ export default async function handler(req, context) {
     .map((p) => {
       const pubDate = new Date(p.created_at).toUTCString();
       const link = `https://doodleandstick.netlify.app/product/${p.id}`;
+      const enclosureTag = p.image_url
+        ? `<enclosure url="${p.image_url}" type="image/${p.image_url.endsWith(".webp") ? "webp" : "jpeg"}" />`
+        : "";
+
       return `
         <item>
           <title><![CDATA[${p.name}]]></title>
@@ -32,14 +37,9 @@ export default async function handler(req, context) {
           <description><![CDATA[
             ${p.description || ""}
             <br/><br/>
-            <strong>Price:</strong> $${p.price}
-            <br/><br/>
-            ${
-              p.image_url
-                ? `<img src="${p.image_url}" alt="${p.name}" />`
-                : ""
-            }
+            Price: $${p.price}
           ]]></description>
+          ${enclosureTag}
           <pubDate>${pubDate}</pubDate>
         </item>
       `;
@@ -49,9 +49,9 @@ export default async function handler(req, context) {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
   <rss version="2.0">
     <channel>
-      <title>Doodle & Stick — Latest Products</title>
+      <title>Doodle and Stick - Latest Products</title>
       <link>https://doodleandstick.netlify.app</link>
-      <description>Newly approved product listings from Doodle & Stick.</description>
+      <description>Newly approved product listings from Doodle and Stick.</description>
       <language>en-us</language>
       ${rssItems}
     </channel>

@@ -139,6 +139,57 @@
       font-weight: 600;
       margin-bottom: 0.5rem;
     }
+
+    /* Popup overlay */
+    .popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .popup.hidden { display: none; }
+
+    .popup-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .star-select span {
+      font-size: 32px;
+      cursor: pointer;
+      color: #ccc;
+      margin: 0 4px;
+    }
+    .star-select span.selected {
+      color: #f4b400;
+    }
+
+    .popup-buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1rem;
+    }
+
+    .btn-primary, .btn-secondary {
+      padding: 0.5rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary { background:#a46a42; color:white; }
+    .btn-secondary { background:#ccc; color:#333; }
+
+    .btn-primary:hover { background:#d1a05a; }
+    .btn-secondary:hover { background:#aaa; }
+
   </style>
 </head>
 <body>
@@ -164,11 +215,34 @@
       </div>
 
       <button class="add-btn" id="addToCartBtn">Add to Cart</button>
+
+      <button class="add-btn" id="leaveReviewBtn" style="background:#a46a42; margin-left:1rem;">
+        Leave a Review
+      </button>
     </div>
   </div>
 
   <h2 style="text-align:center; color:#a46a42; margin-top: 3rem;">Related Products</h2>
   <section class="related-products" id="relatedProducts"></section>
+
+  <!-- Review Popup -->
+  <div id="reviewPopup" class="popup hidden">
+    <div class="popup-content">
+      <h3>Rate This Product</h3>
+      <div class="star-select">
+        <span data-star="1">★</span>
+        <span data-star="2">★</span>
+        <span data-star="3">★</span>
+        <span data-star="4">★</span>
+        <span data-star="5">★</span>
+      </div>
+
+      <div class="popup-buttons">
+        <button id="submitReview" class="btn-primary">Submit</button>
+        <button id="cancelReview" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Supabase client + dynamic product script -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>

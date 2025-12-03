@@ -1,0 +1,63 @@
+// netlify/functions/rss.js
+import { createClient } from "@supabase/supabase-js";
+
+export default async function handler(req, context) {
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_KEY
+  );
+
+  
+  const { data: products, error } = await supabase
+    .from("products")
+    .select("id, name, description, price, image_url, created_at")
+    .eq("is_approved", true)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false })
+    .limit(30);
+
+  if (error) {
+    console.error(error);
+    return new Response("Error fetching products", { status: 500 });
+  }
+
+  const rssItems = products
+    .map((p) => {
+      const pubDate = new Date(p.created_at).toUTCString();
+      const link = `https://doodleandstick.netlify.app/product/${p.id}`;
+      const enclosureTag = p.image_url
+        ? `<enclosure url="${p.image_url}" type="image/${p.image_url.endsWith(".webp") ? "webp" : "jpeg"}" />`
+        : "";
+
+      return `
+        <item>
+          <title><![CDATA[${p.name}]]></title>
+          <link>${link}</link>
+          <guid>${p.id}</guid>
+          <description><![CDATA[
+            ${p.description || ""}
+            <br/><br/>
+            Price: $${p.price}
+          ]]></description>
+          ${enclosureTag}
+          <pubDate>${pubDate}</pubDate>
+        </item>
+      `;
+    })
+    .join("");
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+  <rss version="2.0">
+    <channel>
+      <title>Doodle and Stick - Latest Products</title>
+      <link>https://doodleandstick.netlify.app</link>
+      <description>Newly approved product listings from Doodle and Stick.</description>
+      <language>en-us</language>
+      ${rssItems}
+    </channel>
+  </rss>`;
+
+  return new Response(xml, {
+    headers: { "Content-Type": "application/rss+xml" },
+  });
+}

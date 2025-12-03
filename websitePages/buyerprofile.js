@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Fetch all orders linked to the current user
   const { data: orders, error: ordersError } = await client
     .from("orders")
-    .select("id, status, created_at, confirmed_at, shipped_at, full_name, city, state")
+    .select("id, status, created_at, confirmed_at, shipped_at, full_name, city, state, rating")
     .eq("buyer_id", user.id)
     .order("created_at", { ascending: false });
 
